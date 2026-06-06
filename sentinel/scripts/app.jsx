@@ -1,6 +1,14 @@
 const { useEffect, useMemo, useRef, useState } = React;
 
 const DRAFT_KEY = "sentinel-report-draft";
+const AUTH_USER_KEY = "sentinel-auth-user";
+const SESSION_KEY = "sentinel-auth-session";
+
+const DEFAULT_AUTH_USER = {
+  name: "Officer Mutoni",
+  badge: "4521",
+  password: "Sentinel123!",
+};
 
 const CRIME_TYPES = [
   { value: "assault", label: "Assault / Violence" },
@@ -192,6 +200,15 @@ function useToasts() {
   };
 
   return { toasts, add };
+}
+
+function readJson(key, fallback) {
+  try {
+    const value = window.localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
+  } catch {
+    return fallback;
+  }
 }
 
 function getCrimeLabel(value) {
@@ -511,76 +528,223 @@ function CasesTable({ cases, filter, query, onSelect }) {
   );
 }
 
-function LoginModal({ open, onClose, onLogin }) {
-  const [badge, setBadge] = useState("");
+function AuthModal({ open, onClose, onLogin, onRegister }) {
+  const [mode, setMode] = useState("login");
   const [loading, setLoading] = useState(false);
+  const [loginForm, setLoginForm] = useState({ badge: "", password: "" });
+  const [registerForm, setRegisterForm] = useState({
+    name: "",
+    badge: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  const submit = (event) => {
+  useEffect(() => {
+    if (!open) return;
+    setMode("login");
+    setLoading(false);
+    setLoginForm({ badge: "", password: "" });
+    setRegisterForm({ name: "", badge: "", password: "", confirmPassword: "" });
+  }, [open]);
+
+  const submitLogin = (event) => {
     event.preventDefault();
+    const badge = loginForm.badge.trim();
+    const password = loginForm.password.trim();
 
-    if (!badge.trim()) {
-      onLogin(null);
+    if (!badge) {
+      onLogin(null, "Please enter your badge number.");
+      return;
+    }
+
+    if (!password) {
+      onLogin(null, "Please enter your password.");
       return;
     }
 
     setLoading(true);
     window.setTimeout(() => {
       setLoading(false);
-      onClose();
-      onLogin(badge.trim());
-      setBadge("");
-    }, 1800);
+      onLogin({ badge, password });
+    }, 900);
+  };
+
+  const submitRegister = (event) => {
+    event.preventDefault();
+    const name = registerForm.name.trim();
+    const badge = registerForm.badge.trim();
+    const password = registerForm.password.trim();
+    const confirmPassword = registerForm.confirmPassword.trim();
+
+    if (!name) {
+      onRegister(null, "Please enter your full name.");
+      return;
+    }
+
+    if (!badge) {
+      onRegister(null, "Registration needs a badge number.");
+      return;
+    }
+
+    if (!/^\d+$/.test(badge)) {
+      onRegister(null, "Badge number must contain digits only.");
+      return;
+    }
+
+    if (!password) {
+      onRegister(null, "Please create a password.");
+      return;
+    }
+
+    if (password.length < 6) {
+      onRegister(null, "Password must be at least 6 characters long.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      onRegister(null, "Passwords do not match.");
+      return;
+    }
+
+    setLoading(true);
+    window.setTimeout(() => {
+      setLoading(false);
+      onRegister({ name, badge, password });
+    }, 900);
   };
 
   return (
     <div className={`modal-overlay ${open ? "open" : ""}`} onClick={(event) => event.target === event.currentTarget && onClose()}>
-      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="login-title">
+      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
         <div className="modal-head">
-          <div className="modal-title" id="login-title">
-            Staff sign in
+          <div>
+            <div className="modal-title" id="auth-title">
+              Staff access
+            </div>
+            <div className="modal-subtitle">Log in or register a staff account for the demo.</div>
           </div>
           <button type="button" className="close-btn" onClick={onClose} aria-label="Close sign-in dialog">
-            ×
+            Close
           </button>
         </div>
 
-        <form className="modal-body" onSubmit={submit}>
+        <div className="auth-tabs" role="tablist" aria-label="Authentication mode">
+          <button type="button" className={`auth-tab ${mode === "login" ? "active" : ""}`} onClick={() => setMode("login")}>
+            Login
+          </button>
+          <button type="button" className={`auth-tab ${mode === "register" ? "active" : ""}`} onClick={() => setMode("register")}>
+            Register
+          </button>
+        </div>
+
+        <div className="modal-body">
           <div className="helper-note lock-note">
             <span aria-hidden="true">i</span>
-            <div>Use your badge number and verification code to open a secure staff session.</div>
+            <div>
+              {mode === "login"
+                ? "Use your badge number and password to open a secure session."
+                : "Create a staff account first. A badge number is required to register."}
+            </div>
           </div>
 
-          <div className="field">
-            <label htmlFor="badge-number">Badge number</label>
-            <input
-              id="badge-number"
-              className="input"
-              type="text"
-              value={badge}
-              onChange={(event) => setBadge(event.target.value)}
-              placeholder="e.g. 4521"
-            />
-          </div>
+          {mode === "login" ? (
+            <form onSubmit={submitLogin}>
+              <div className="field">
+                <label htmlFor="login-badge">Badge number</label>
+                <input
+                  id="login-badge"
+                  className="input"
+                  type="text"
+                  value={loginForm.badge}
+                  onChange={(event) => setLoginForm((current) => ({ ...current, badge: event.target.value }))}
+                  placeholder="e.g. 4521"
+                />
+              </div>
 
-          <div className="field">
-            <label htmlFor="password">Password</label>
-            <input id="password" className="input" type="password" placeholder="Your password" />
-          </div>
+              <div className="field">
+                <label htmlFor="login-password">Password</label>
+                <input
+                  id="login-password"
+                  className="input"
+                  type="password"
+                  value={loginForm.password}
+                  onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
+                  placeholder="Your password"
+                />
+              </div>
 
-          <div className="field">
-            <label htmlFor="mfa">MFA code</label>
-            <input id="mfa" className="input" type="text" placeholder="6-digit code" maxLength={6} />
-          </div>
+              <div className="modal-actions">
+                <button type="button" className="btn btn-secondary" onClick={onClose}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading ? "Signing in..." : "Login"}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={submitRegister}>
+              <div className="field">
+                <label htmlFor="register-name">Full name</label>
+                <input
+                  id="register-name"
+                  className="input"
+                  type="text"
+                  value={registerForm.name}
+                  onChange={(event) => setRegisterForm((current) => ({ ...current, name: event.target.value }))}
+                  placeholder="Officer full name"
+                />
+              </div>
 
-          <div className="modal-actions">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? "Verifying..." : "Secure login"}
-            </button>
-          </div>
-        </form>
+              <div className="field">
+                <label htmlFor="register-badge">Badge number</label>
+                <input
+                  id="register-badge"
+                  className="input"
+                  type="text"
+                  value={registerForm.badge}
+                  onChange={(event) => setRegisterForm((current) => ({ ...current, badge: event.target.value }))}
+                  placeholder="Required"
+                />
+              </div>
+
+              <div className="field">
+                <label htmlFor="register-password">Password</label>
+                <input
+                  id="register-password"
+                  className="input"
+                  type="password"
+                  value={registerForm.password}
+                  onChange={(event) => setRegisterForm((current) => ({ ...current, password: event.target.value }))}
+                  placeholder="Create a password"
+                />
+              </div>
+
+              <div className="field">
+                <label htmlFor="register-confirm">Confirm password</label>
+                <input
+                  id="register-confirm"
+                  className="input"
+                  type="password"
+                  value={registerForm.confirmPassword}
+                  onChange={(event) =>
+                    setRegisterForm((current) => ({ ...current, confirmPassword: event.target.value }))
+                  }
+                  placeholder="Repeat your password"
+                />
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" className="btn btn-secondary" onClick={onClose}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading ? "Creating..." : "Register"}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -603,6 +767,20 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeNav, setActiveNav] = useState("Dashboard");
   const [loginOpen, setLoginOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(() => {
+    if (typeof window === "undefined") {
+      return DEFAULT_AUTH_USER;
+    }
+
+    return readJson(SESSION_KEY, DEFAULT_AUTH_USER);
+  });
+  const [registeredUser, setRegisteredUser] = useState(() => {
+    if (typeof window === "undefined") {
+      return DEFAULT_AUTH_USER;
+    }
+
+    return readJson(AUTH_USER_KEY, DEFAULT_AUTH_USER);
+  });
   const [caseCounter, setCaseCounter] = useState(247);
   const [feed, setFeed] = useState(INITIAL_FEED);
   const [cases, setCases] = useState(INITIAL_CASES);
@@ -615,6 +793,19 @@ function App() {
   useEffect(() => {
     document.body.className = `theme-${theme}`;
   }, [theme]);
+
+  useEffect(() => {
+    window.localStorage.setItem(AUTH_USER_KEY, JSON.stringify(registeredUser));
+  }, [registeredUser]);
+
+  useEffect(() => {
+    if (currentUser) {
+      window.localStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+      return;
+    }
+
+    window.localStorage.removeItem(SESSION_KEY);
+  }, [currentUser]);
 
   const scrollToReport = () => {
     reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -646,6 +837,8 @@ function App() {
     }
 
     if (label === "Sign Out") {
+      setCurrentUser(null);
+      window.localStorage.removeItem(SESSION_KEY);
       addToast("You have been signed out of the demo session.");
       setSidebarOpen(false);
       return;
@@ -697,13 +890,52 @@ function App() {
     addToast(`Report ${caseId} submitted successfully.`);
   };
 
-  const handleLogin = (badge) => {
-    if (!badge) {
-      addToast("Please enter your badge number to continue.", true);
+  const handleLogin = (credentials, errorMessage) => {
+    if (errorMessage) {
+      addToast(errorMessage, true);
       return;
     }
 
-    addToast(`Welcome back, Officer Mutoni. Badge ${badge} is now connected.`);
+    if (!credentials?.badge || !credentials?.password) {
+      addToast("Please enter both badge number and password.", true);
+      return;
+    }
+
+    if (credentials.badge !== registeredUser.badge || credentials.password !== registeredUser.password) {
+      addToast("The badge number or password is incorrect.", true);
+      return;
+    }
+
+    const user = {
+      name: registeredUser.name,
+      badge: registeredUser.badge,
+    };
+
+    setCurrentUser(user);
+    addToast(`Welcome back, ${user.name}. Badge ${user.badge} is now connected.`);
+  };
+
+  const handleRegister = (details, errorMessage) => {
+    if (errorMessage) {
+      addToast(errorMessage, true);
+      return;
+    }
+
+    if (!details?.badge) {
+      addToast("Registration needs a badge number.", true);
+      return;
+    }
+
+    const user = {
+      name: details.name,
+      badge: details.badge,
+      password: details.password,
+    };
+
+    setRegisteredUser(user);
+    setCurrentUser({ name: user.name, badge: user.badge });
+    addToast(`Account created for ${user.name}. You are now signed in.`);
+    setLoginOpen(false);
   };
 
   const filteredCount = useMemo(() => {
@@ -734,7 +966,7 @@ function App() {
 
         <div className="topbar-actions">
           <button className="menu-btn" type="button" onClick={() => setSidebarOpen((current) => !current)} aria-label="Toggle navigation menu">
-            ☰
+            Menu
           </button>
 
           <button
@@ -751,9 +983,9 @@ function App() {
 
           <button type="button" className="profile-btn" onClick={() => setLoginOpen(true)}>
             <span className="avatar" aria-hidden="true">
-              JM
+              {currentUser?.name ? currentUser.name.slice(0, 2).toUpperCase() : "SI"}
             </span>
-            <span>Officer Mutoni</span>
+            <span>{currentUser?.name || "Sign in"}</span>
           </button>
         </div>
       </header>
@@ -891,7 +1123,7 @@ function App() {
                   ))}
 
                   <div className="search-box">
-                    <span aria-hidden="true">⌕</span>
+                    <span aria-hidden="true">Search</span>
                     <input
                       type="text"
                       value={searchQuery}
@@ -914,7 +1146,12 @@ function App() {
         </main>
       </div>
 
-      <LoginModal open={loginOpen} onClose={() => setLoginOpen(false)} onLogin={handleLogin} />
+      <AuthModal
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        onLogin={handleLogin}
+        onRegister={handleRegister}
+      />
       <Toasts toasts={toasts} />
     </div>
   );
