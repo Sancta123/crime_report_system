@@ -1049,6 +1049,242 @@ tbody td {
   color: var(--muted);
 }
 
+.content-grid.single {
+  grid-template-columns: 1fr;
+}
+
+.stats-grid.compact {
+  margin-bottom: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.field-label {
+  color: var(--muted-2);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.field-hint {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.72rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--text);
+  transition: border-color var(--trans), background var(--trans), box-shadow var(--trans);
+}
+
+.input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--primary) 55%, var(--border));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.search-input {
+  min-width: min(100%, 320px);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 0.9rem;
+}
+
+.detail-stack,
+.timeline,
+.bar-chart,
+.heatmap-list,
+.permission-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.detail-box,
+.permission-card,
+.notice-box {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
+.notice-box {
+  margin-bottom: 0.9rem;
+  color: var(--muted);
+}
+
+.link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  color: var(--text);
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.timeline-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.timeline-item {
+  padding: 0.8rem 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
+.timeline-time {
+  color: var(--muted-2);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.timeline-title,
+.bar-row strong,
+.heatmap-item strong {
+  display: block;
+  margin-top: 0.2rem;
+  font-weight: 800;
+}
+
+.timeline-note {
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) 48px;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.bar-track {
+  height: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), var(--primary-strong));
+}
+
+.heatmap-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
+.toggle-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.toggle-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.85rem 0.8rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  text-align: left;
+}
+
+.data-table th {
+  color: var(--muted-2);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.data-table tbody tr:hover {
+  background: color-mix(in srgb, var(--surface-2) 72%, transparent);
+}
+
+.auth-preview {
+  margin-bottom: 0.9rem;
+}
+
+.status-pill.is-offline {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.status-pill.is-live {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.badge.evidence {
+  background: var(--critical-soft);
+  color: var(--critical);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .toasts {
   position: fixed;
   top: 92px;
