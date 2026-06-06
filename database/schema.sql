@@ -1,0 +1,129 @@
+CREATE TABLE officers (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  badge_number VARCHAR(32) NOT NULL UNIQUE,
+  full_name VARCHAR(150) NOT NULL,
+  rank_title VARCHAR(80) NOT NULL,
+  role VARCHAR(40) NOT NULL,
+  permissions JSON NOT NULL,
+  email VARCHAR(190),
+  phone VARCHAR(40),
+  status VARCHAR(24) NOT NULL DEFAULT 'active',
+  assigned_unit VARCHAR(120),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE cases (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  case_number VARCHAR(40) NOT NULL UNIQUE,
+  title VARCHAR(255) NOT NULL,
+  category VARCHAR(80) NOT NULL,
+  status VARCHAR(40) NOT NULL,
+  priority VARCHAR(20) NOT NULL,
+  location VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  reporter_name VARCHAR(150),
+  reporter_contact VARCHAR(120),
+  officer_id BIGINT UNSIGNED NULL,
+  opened_at DATETIME NOT NULL,
+  closed_at DATETIME NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_cases_officer FOREIGN KEY (officer_id) REFERENCES officers(id)
+);
+
+CREATE TABLE case_history (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  case_id BIGINT UNSIGNED NOT NULL,
+  event_type VARCHAR(80) NOT NULL,
+  detail TEXT NOT NULL,
+  actor_name VARCHAR(150) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_case_history_case FOREIGN KEY (case_id) REFERENCES cases(id) ON DELETE CASCADE
+);
+
+CREATE TABLE evidence (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  case_id BIGINT UNSIGNED NOT NULL,
+  evidence_number VARCHAR(40) NOT NULL UNIQUE,
+  kind VARCHAR(40) NOT NULL,
+  file_name VARCHAR(255) NOT NULL,
+  mime_type VARCHAR(120),
+  storage_url TEXT,
+  description TEXT,
+  capture_at DATETIME NULL,
+  custody_status VARCHAR(40) NOT NULL DEFAULT 'Logged',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_evidence_case FOREIGN KEY (case_id) REFERENCES cases(id) ON DELETE CASCADE
+);
+
+CREATE TABLE evidence_chain_of_custody (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  evidence_id BIGINT UNSIGNED NOT NULL,
+  step_number INT NOT NULL,
+  handled_by VARCHAR(150) NOT NULL,
+  action VARCHAR(120) NOT NULL,
+  notes TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_custody_evidence FOREIGN KEY (evidence_id) REFERENCES evidence(id) ON DELETE CASCADE
+);
+
+CREATE TABLE suspects (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  full_name VARCHAR(150) NOT NULL,
+  national_id VARCHAR(50),
+  address TEXT,
+  contact_information TEXT,
+  known_aliases JSON,
+  risk_level VARCHAR(20) NOT NULL DEFAULT 'Medium',
+  verification_status VARCHAR(40) NOT NULL DEFAULT 'Unverified',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE case_suspects (
+  case_id BIGINT UNSIGNED NOT NULL,
+  suspect_id BIGINT UNSIGNED NOT NULL,
+  relation_type VARCHAR(80),
+  PRIMARY KEY (case_id, suspect_id),
+  CONSTRAINT fk_case_suspects_case FOREIGN KEY (case_id) REFERENCES cases(id) ON DELETE CASCADE,
+  CONSTRAINT fk_case_suspects_suspect FOREIGN KEY (suspect_id) REFERENCES suspects(id) ON DELETE CASCADE
+);
+
+CREATE TABLE cameras (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  camera_code VARCHAR(60) NOT NULL UNIQUE,
+  location_name VARCHAR(255) NOT NULL,
+  district VARCHAR(120),
+  latitude DECIMAL(10, 7),
+  longitude DECIMAL(10, 7),
+  retention_days INT NOT NULL DEFAULT 30,
+  status VARCHAR(24) NOT NULL DEFAULT 'active',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE verification_requests (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  officer_id BIGINT UNSIGNED NOT NULL,
+  suspect_id BIGINT UNSIGNED NULL,
+  verification_type VARCHAR(60) NOT NULL,
+  provider_name VARCHAR(120) NOT NULL,
+  status VARCHAR(40) NOT NULL,
+  authorization_reference VARCHAR(120) NOT NULL,
+  request_payload JSON NOT NULL,
+  response_payload JSON NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_verification_officer FOREIGN KEY (officer_id) REFERENCES officers(id),
+  CONSTRAINT fk_verification_suspect FOREIGN KEY (suspect_id) REFERENCES suspects(id) ON DELETE SET NULL
+);
+
+CREATE TABLE audit_logs (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  actor VARCHAR(150) NOT NULL,
+  action VARCHAR(120) NOT NULL,
+  entity_type VARCHAR(80) NOT NULL,
+  entity_id VARCHAR(80) NOT NULL,
+  metadata JSON NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

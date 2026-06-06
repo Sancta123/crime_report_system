@@ -1,0 +1,2 @@
+-- Migration 001: Sentinel initial production schema.
+-- Copy the statements from ../schema.sql into your migration runner if it does not support MySQL client commands.
