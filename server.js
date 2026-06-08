@@ -4,6 +4,12 @@ const fs = require("fs");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+try {
+  require("dotenv").config();
+} catch {
+  // dotenv is optional when the host injects environment variables directly.
+}
+
 const app = express();
 const port = process.env.PORT || 3000;
 const rootDir = __dirname;

@@ -173,6 +173,7 @@ function initialData() {
       fullName: "Officer Mutoni",
       rankTitle: "Inspector",
       role: "admin",
+      accessCode: "Sentinel123!",
       email: "mutoni@sentinel.local",
       phone: "+250780000001",
       assignedUnit: "Central Operations",
@@ -187,6 +188,7 @@ function initialData() {
       fullName: "Officer Jean Claude",
       rankTitle: "Detective Sergeant",
       role: "investigator",
+      accessCode: "Investigate!",
       email: "jean.claude@sentinel.local",
       phone: "+250780000002",
       assignedUnit: "Investigations Unit",
@@ -201,6 +203,7 @@ function initialData() {
       fullName: "Officer Aline",
       rankTitle: "Analyst",
       role: "analyst",
+      accessCode: "Analyse99!",
       email: "aline@sentinel.local",
       phone: "+250780000003",
       assignedUnit: "Intelligence Desk",
@@ -396,12 +399,27 @@ function initialData() {
   };
 }
 
+function normalizeOfficerCredentials(officer) {
+  const defaults = {
+    "4521": "Sentinel123!",
+    "4187": "Investigate!",
+    "5304": "Analyse99!",
+  };
+
+  return {
+    ...officer,
+    accessCode: officer.accessCode || defaults[officer.badgeNumber] || "",
+  };
+}
+
 function loadData() {
   const saved = safeParse(window.localStorage.getItem(STORAGE_KEY), null);
   if (!saved) return initialData();
+  const seed = initialData();
   return {
-    ...initialData(),
+    ...seed,
     ...saved,
+    officers: Array.isArray(saved.officers) ? saved.officers.map(normalizeOfficerCredentials) : seed.officers.map(normalizeOfficerCredentials),
     queue: Array.isArray(saved.queue) ? saved.queue : [],
   };
 }
@@ -526,6 +544,127 @@ function LoginModal({ open, officers, onClose, onLogin, currentBadge }) {
               Sign in
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AuthModal({ open, officers, onClose, onLogin, onRegister, currentBadge }) {
+  const [mode, setMode] = useState("signin");
+  const [badgeNumber, setBadgeNumber] = useState(currentBadge || officers[0]?.badgeNumber || "");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [rankTitle, setRankTitle] = useState("Officer");
+  const [role, setRole] = useState("investigator");
+
+  useEffect(() => {
+    if (open) {
+      setMode("signin");
+      setBadgeNumber(currentBadge || officers[0]?.badgeNumber || "");
+      setPassword("");
+      setFullName("");
+      setRankTitle("Officer");
+      setRole("investigator");
+    }
+  }, [open, currentBadge, officers]);
+
+  if (!open) return null;
+
+  const selectedOfficer = officers.find((officer) => officer.badgeNumber === badgeNumber);
+
+  return (
+    <div className="modal-overlay open" role="presentation" onClick={onClose}>
+      <div className="modal auth-modal" role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}>
+        <div className="modal-head">
+          <div>
+            <div className="modal-title">{mode === "register" ? "Register Officer" : "Staff Sign In"}</div>
+            <div className="modal-subtitle">
+              {mode === "register"
+                ? "Create a staff account with a badge number and password."
+                : "Authenticate with your officer badge and password."}
+            </div>
+          </div>
+          <button className="close-btn" type="button" onClick={onClose} aria-label="Close auth dialog">
+            ×
+          </button>
+        </div>
+        <div className="modal-body">
+          <div className="auth-tabs">
+            <button type="button" className={`auth-tab ${mode === "signin" ? "active" : ""}`} onClick={() => setMode("signin")}>
+              Sign in
+            </button>
+            <button type="button" className={`auth-tab ${mode === "register" ? "active" : ""}`} onClick={() => setMode("register")}>
+              Register
+            </button>
+          </div>
+          <div className="auth-preview">
+            <Pill tone={selectedOfficer ? roleTone(selectedOfficer.role) : "open"}>
+              {selectedOfficer ? `${selectedOfficer.fullName} · ${selectedOfficer.role}` : "No officer selected"}
+            </Pill>
+          </div>
+          {mode === "register" ? (
+            <>
+              <Field label="Full name">
+                <input className="input" value={fullName} onChange={(event) => setFullName(event.target.value)} placeholder="Officer full name" />
+              </Field>
+              <Field label="Badge number">
+                <input className="input" value={badgeNumber} onChange={(event) => setBadgeNumber(event.target.value)} placeholder="4521" />
+              </Field>
+              <Field label="Password">
+                <input className="input" type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Create a password" />
+              </Field>
+              <div className="form-grid">
+                <Field label="Rank title">
+                  <input className="input" value={rankTitle} onChange={(event) => setRankTitle(event.target.value)} placeholder="Officer" />
+                </Field>
+                <Field label="Role">
+                  <select className="input" value={role} onChange={(event) => setRole(event.target.value)}>
+                    {OFFICER_ROLES.map((entry) => (
+                      <option key={entry.value} value={entry.value}>
+                        {entry.label}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+              </div>
+              <div className="modal-actions">
+                <button type="button" className="btn btn-secondary" onClick={onClose}>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => onRegister({ fullName, badgeNumber, password, rankTitle, role })}
+                  disabled={!fullName || !badgeNumber || !password}
+                >
+                  Create account
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <Field label="Badge number">
+                <input className="input" value={badgeNumber} onChange={(event) => setBadgeNumber(event.target.value)} placeholder="4521" />
+              </Field>
+              <Field label="Password">
+                <input className="input" type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter password" />
+              </Field>
+              <div className="modal-actions">
+                <button type="button" className="btn btn-secondary" onClick={onClose}>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => onLogin({ badgeNumber, password })}
+                  disabled={!badgeNumber || !password}
+                >
+                  Sign in
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -1024,14 +1163,9 @@ function App() {
 
   const handleLogin = ({ badgeNumber, password }) => {
     const officer = data.officers.find((entry) => entry.badgeNumber === badgeNumber);
-    const defaultPasswords = {
-      "4521": "Sentinel123!",
-      "4187": "Investigate!",
-      "5304": "Analyse99!",
-    };
 
-    if (!officer || defaultPasswords[badgeNumber] !== password) {
-      pushToast("Invalid badge number or access code.", "error");
+    if (!officer || officer.accessCode !== password) {
+      pushToast("Invalid officer badge or password.", "error");
       return;
     }
 
@@ -1045,6 +1179,50 @@ function App() {
     setSession(nextSession);
     setLoginOpen(false);
     pushToast(`Welcome back, ${officer.fullName}.`);
+  };
+
+  const handleRegister = ({ fullName, badgeNumber, password, rankTitle, role }) => {
+    if (!fullName || !badgeNumber || !password) {
+      pushToast("All registration fields are required.", "error");
+      return;
+    }
+
+    if (data.officers.some((officer) => officer.badgeNumber === badgeNumber)) {
+      pushToast("That badge number is already registered.", "error");
+      return;
+    }
+
+    const officer = {
+      id: uid("officer"),
+      badgeNumber,
+      fullName,
+      rankTitle: rankTitle || "Officer",
+      role,
+      accessCode: password,
+      email: "",
+      phone: "",
+      assignedUnit: "Unassigned",
+      status: "Active",
+      permissions: PERMISSIONS[role] || PERMISSIONS.officer,
+      activity: "Registered through Sentinel staff onboarding",
+      workload: 0,
+    };
+
+    setData((current) => ({
+      ...current,
+      officers: [officer, ...current.officers],
+      auditLogs: [makeAudit(fullName, "Registered officer account", "officer", officer.id, { badgeNumber, role }), ...current.auditLogs],
+    }));
+
+    setSession({
+      currentUser: {
+        badgeNumber: officer.badgeNumber,
+        name: officer.fullName,
+        role: officer.role,
+      },
+    });
+    setLoginOpen(false);
+    pushToast(`Account created for ${officer.fullName}. You are now signed in.`);
   };
 
   const handleLogout = () => {
@@ -1927,11 +2105,12 @@ function App() {
         </main>
       </div>
 
-      <LoginModal
+      <AuthModal
         open={loginOpen}
         officers={data.officers}
         onClose={() => setLoginOpen(false)}
         onLogin={handleLogin}
+        onRegister={handleRegister}
         currentBadge={currentUser?.badgeNumber}
       />
 

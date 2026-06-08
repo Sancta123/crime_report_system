@@ -7,12 +7,15 @@
   "scripts": {
     "dev": "node scripts/dev.js",
     "start": "node server.js",
+    "db:sync": "node db-sync.js",
     "build": "node -e \"console.log('Sentinel uses a no-bundle runtime. Deploy with npm start.')\""
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2"
+    "dotenv": "^17.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.3"
   }
 }
