@@ -1128,6 +1128,37 @@ tbody td {
   background: var(--surface-2);
 }
 
+.scan-result {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.scan-result-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.scan-result-title {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.scan-result-subtitle {
+  margin-top: 0.2rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.scan-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
 .notice-box {
   margin-bottom: 0.9rem;
   color: var(--muted);

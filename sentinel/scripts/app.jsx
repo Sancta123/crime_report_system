@@ -188,6 +188,45 @@ const SYSTEM_CARDS = [
   },
 ];
 
+const NATIONAL_SYSTEM_RECORDS = [
+  {
+    fullName: "Mugisha Eric",
+    nationalId: "1199887711223344",
+    dateOfBirth: "1997-04-18",
+    sex: "Male",
+    address: "Kicukiro District, Kigali",
+    citizenship: "Rwanda",
+    verificationStatus: "Verified",
+    provider: "National Identity Authority",
+    providerReference: "NIDA-884120",
+    riskFlag: "Medium",
+  },
+  {
+    fullName: "Ntirenganya Felix",
+    nationalId: "1177443322119988",
+    dateOfBirth: "1990-11-02",
+    sex: "Male",
+    address: "Gasabo District, Kigali",
+    citizenship: "Rwanda",
+    verificationStatus: "Verified",
+    provider: "National Identity Authority",
+    providerReference: "NIDA-440218",
+    riskFlag: "High",
+  },
+  {
+    fullName: "Aline Uwase",
+    nationalId: "1199008877665544",
+    dateOfBirth: "1999-08-25",
+    sex: "Female",
+    address: "Nyarugenge District, Kigali",
+    citizenship: "Rwanda",
+    verificationStatus: "Verified",
+    provider: "National Identity Authority",
+    providerReference: "NIDA-102934",
+    riskFlag: "Low",
+  },
+];
+
 function useToasts() {
   const [toasts, setToasts] = useState([]);
 
@@ -528,6 +567,135 @@ function CasesTable({ cases, filter, query, onSelect }) {
   );
 }
 
+function SuspectScanner({ onScan, result, scanning }) {
+  const [scanForm, setScanForm] = useState({
+    imageName: "",
+    photo: null,
+    note: "",
+  });
+
+  const submitScan = (event) => {
+    event.preventDefault();
+    onScan(scanForm);
+  };
+
+  return (
+    <section className="panel" aria-label="Suspect scan">
+      <div className="panel-head">
+        <div className="panel-copy">
+          <h2 className="panel-title">Suspect photo scan</h2>
+          <div className="panel-subtitle">Take a photo or upload an image to query the authorized national system.</div>
+        </div>
+        <button type="button" className="panel-action" onClick={() => onScan(scanForm)} disabled={scanning}>
+          {scanning ? "Scanning..." : "Scan now"}
+        </button>
+      </div>
+
+      <form className="form-body" onSubmit={submitScan}>
+        <div className="form-grid">
+          <div className="field">
+            <label htmlFor="suspect-photo">Capture / upload photo</label>
+            <input
+              id="suspect-photo"
+              className="input"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={(event) => setScanForm((current) => ({ ...current, photo: event.target.files?.[0] || null }))}
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="suspect-image-name">File or scan label</label>
+            <input
+              id="suspect-image-name"
+              className="input"
+              type="text"
+              value={scanForm.imageName}
+              onChange={(event) => setScanForm((current) => ({ ...current, imageName: event.target.value }))}
+              placeholder="Optional hint such as name, alias, or ID"
+            />
+          </div>
+        </div>
+
+        <div className="field field-full">
+          <label htmlFor="suspect-note">Officer notes</label>
+          <textarea
+            id="suspect-note"
+            className="textarea"
+            value={scanForm.note}
+            onChange={(event) => setScanForm((current) => ({ ...current, note: event.target.value }))}
+            placeholder="Reason for scan, arrest context, or field notes"
+          />
+        </div>
+
+        <div className="helper-note">
+          <span aria-hidden="true">i</span>
+          <div>
+            This panel is for authorized facial/photo verification only. Sentinel should call the national system API, not store raw biometric templates locally.
+          </div>
+        </div>
+
+        <div className="form-footer">
+          <button type="submit" className="btn btn-primary" disabled={scanning}>
+            {scanning ? "Scanning..." : "Run identity check"}
+          </button>
+        </div>
+      </form>
+
+      {result ? (
+        <div className="scan-result">
+          <div className="scan-result-head">
+            <div>
+              <div className="scan-result-title">{result.fullName}</div>
+              <div className="scan-result-subtitle">
+                {result.provider} · {result.providerReference}
+              </div>
+            </div>
+            <span className={`badge ${result.riskFlag === "High" ? "open" : result.riskFlag === "Medium" ? "review" : "closed"}`}>
+              {result.riskFlag} risk
+            </span>
+          </div>
+
+          <div className="scan-grid">
+            <div className="detail-box">
+              <strong>National ID</strong>
+              <div className="case-subtle">{result.nationalId}</div>
+            </div>
+            <div className="detail-box">
+              <strong>Date of birth</strong>
+              <div className="case-subtle">{result.dateOfBirth}</div>
+            </div>
+            <div className="detail-box">
+              <strong>Sex</strong>
+              <div className="case-subtle">{result.sex}</div>
+            </div>
+            <div className="detail-box">
+              <strong>Address</strong>
+              <div className="case-subtle">{result.address}</div>
+            </div>
+            <div className="detail-box">
+              <strong>Citizenship</strong>
+              <div className="case-subtle">{result.citizenship}</div>
+            </div>
+            <div className="detail-box">
+              <strong>Verification</strong>
+              <div className="case-subtle">{result.verificationStatus}</div>
+            </div>
+          </div>
+
+          <div className="helper-note lock-note">
+            <span aria-hidden="true">i</span>
+            <div>
+              Match confidence: {result.confidence}. The national system should supply this result through an authorized facial-recognition or identity API.
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
 function AuthModal({ open, onClose, onLogin, onRegister }) {
   const [mode, setMode] = useState("login");
   const [loading, setLoading] = useState(false);
@@ -786,6 +954,8 @@ function App() {
   const [cases, setCases] = useState(INITIAL_CASES);
   const [caseFilter, setCaseFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [scanResult, setScanResult] = useState(null);
+  const [scanLoading, setScanLoading] = useState(false);
   const { toasts, add: addToast } = useToasts();
   const reportRef = useRef(null);
   const casesRef = useRef(null);
@@ -938,6 +1108,41 @@ function App() {
     setLoginOpen(false);
   };
 
+  const handleSuspectScan = (scanForm) => {
+    if (!currentUser) {
+      addToast("Please sign in before running an identity check.", true);
+      return;
+    }
+
+    if (!scanForm?.photo && !scanForm?.imageName?.trim()) {
+      addToast("Take a photo or add a scan label before querying the national system.", true);
+      return;
+    }
+
+    setScanLoading(true);
+
+    window.setTimeout(() => {
+      const hint = `${scanForm?.imageName || ""} ${scanForm?.photo?.name || ""}`.trim().toLowerCase();
+      const matchedRecord =
+        NATIONAL_SYSTEM_RECORDS.find((record) =>
+          [record.fullName, record.nationalId, record.providerReference].some((value) => hint.includes(String(value).toLowerCase()))
+        ) || NATIONAL_SYSTEM_RECORDS[0];
+
+      const confidence = matchedRecord === NATIONAL_SYSTEM_RECORDS[0] && !hint ? "87%" : hint ? "92%" : "74%";
+
+      setScanResult({
+        ...matchedRecord,
+        confidence,
+        scannedAt: new Date().toLocaleString(),
+        scannedBy: currentUser.name,
+        note: scanForm?.note || "",
+      });
+
+      setScanLoading(false);
+      addToast(`National system lookup returned a match for ${matchedRecord.fullName}.`);
+    }, 900);
+  };
+
   const filteredCount = useMemo(() => {
     const term = searchQuery.trim().toLowerCase();
 
@@ -1071,6 +1276,10 @@ function App() {
           </section>
 
           <SystemStatusGrid />
+
+          <section className="content-grid">
+            <SuspectScanner onScan={handleSuspectScan} result={scanResult} scanning={scanLoading} />
+          </section>
 
           <section className="content-grid">
             <section className="panel" ref={reportRef}>

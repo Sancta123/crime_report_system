@@ -7,6 +7,7 @@ This repository now includes:
 - A deployable Node.js host for Render and local development
 - A browser-based React operations console
 - MySQL schema, seed data, and migration scaffolding
+- A `db-sync.js` helper that recreates the Sentinel tables in MySQL
 - Security, synchronization, deployment, and integration documentation
 
 ## What Changed
@@ -21,8 +22,10 @@ The fix is now in place:
 
 1. A root `package.json` has been added.
 2. A root `server.js` has been added so the app can actually boot from the repository root.
-3. The frontend now loads `sentinel/scripts/platform.jsx`, which expands the prototype into a module-based Sentinel console.
+3. The frontend now loads `sentinel/scripts/app.jsx`, preserving the original prototype UI while adding new capabilities.
 4. `scripts/dev.js` exits immediately in non-interactive build environments, so `npm run dev` will not hang a CI build.
+5. The auth modal now has both `Sign in` and `Register` tabs.
+6. `db-sync.js` can recreate the MySQL `sentinel` database and seed it.
 
 For Render, the correct setup is still:
 
@@ -42,6 +45,7 @@ If you keep `npm run dev` as the build command, the included guard prevents a ha
 - CCTV camera registry and footage lookup
 - Identity verification logging with authorization checks and no raw biometric storage
 - Suspect profiles with case linkage and verification status
+- Suspect photo scan that looks up authorized national-system identity data
 - Analytics for trends, closure rates, and workload
 - Security notes and audit visibility
 
@@ -51,6 +55,7 @@ If you keep `npm run dev` as the build command, the included guard prevents a ha
 crime_report_system/
 |-- README.md
 |-- package.json
+|-- db-sync.js
 |-- server.js
 |-- scripts/
 |   `-- dev.js
@@ -100,6 +105,32 @@ npm run dev
 
 That command is safe for local usage and CI-style build contexts.
 
+## MySQL Sync
+
+To recreate the Sentinel tables in your MySQL database:
+
+```bash
+npm run db:sync
+```
+
+This script uses the local `mysql2` Node driver, so make sure dependencies are installed with `npm install` before running it.
+It also reads values from your root `.env` file automatically.
+
+Default connection settings:
+
+- Host: `127.0.0.1`
+- Port: `3306`
+- User: `root`
+- Database: `sentinel`
+
+You can override them with:
+
+- `MYSQL_HOST`
+- `MYSQL_PORT`
+- `MYSQL_USER`
+- `MYSQL_PASSWORD`
+- `MYSQL_DATABASE`
+
 ## Render Deployment
 
 Use a Render **Web Service**, not a static site, because Sentinel includes a Node.js server host.
@@ -130,6 +161,11 @@ It provides:
 - Suspect management
 - Analytics dashboard
 - Security and sync views
+
+The auth modal opens with two tabs:
+
+- `Sign in` for officer badge and password
+- `Register` for creating a new officer account in the prototype
 
 State is persisted in browser storage for offline-first behavior and demo-grade continuity.
 
