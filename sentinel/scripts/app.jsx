@@ -188,6 +188,45 @@ const SYSTEM_CARDS = [
   },
 ];
 
+const DISTRICT_MAP_DATA = [
+  { id: "nyarugenge", name: "Nyarugenge", rate: 94, level: "critical" },
+  { id: "gasabo", name: "Gasabo", rate: 78, level: "high" },
+  { id: "kicukiro", name: "Kicukiro", rate: 62, level: "med" },
+  { id: "remera", name: "Remera", rate: 50, level: "med" },
+  { id: "kimironko", name: "Kimironko", rate: 34, level: "low" },
+];
+
+const SECURITY_LEVELS = [
+  { key: "critical", label: "Critical", color: "var(--critical)" },
+  { key: "high", label: "High", color: "var(--danger)" },
+  { key: "med", label: "Medium", color: "var(--warning)" },
+  { key: "low", label: "Low", color: "var(--accent)" },
+];
+
+const OFFICERS = [
+  { id: "4521", name: "Officer Mutoni", role: "Patrol", status: "On duty", location: "Nyarugenge" },
+  { id: "6782", name: "Officer Uwase", role: "Detective", status: "Ready", location: "Gasabo" },
+  { id: "3390", name: "Officer Habimana", role: "Traffic", status: "On call", location: "Kicukiro" },
+];
+
+const DEPARTMENTS = [
+  { name: "Patrol", units: 12, active: 8, focus: "Neighborhood response" },
+  { name: "Detective", units: 5, active: 4, focus: "Case investigation" },
+  { name: "Evidence", units: 3, active: 3, focus: "Secure storage" },
+];
+
+const EVIDENCE_ITEMS = [
+  { id: "EV-001", type: "Photo", caseId: "KGL-2026-0247", location: "Nyarugenge", status: "Stored" },
+  { id: "EV-002", type: "Video", caseId: "KGL-2026-0246", location: "Kicukiro", status: "Under review" },
+  { id: "EV-003", type: "Sample", caseId: "KGL-2026-0245", location: "Gasabo", status: "Locked" },
+];
+
+const SECURITY_LOG = [
+  { time: "09:48", event: "Login", actor: "Officer Mutoni", status: "Success" },
+  { time: "09:33", event: "Case record viewed", actor: "Officer Uwase", status: "Success" },
+  { time: "09:12", event: "Evidence upload", actor: "Officer Habimana", status: "Success" },
+];
+
 const NATIONAL_SYSTEM_RECORDS = [
   {
     fullName: "Mugisha Eric",
@@ -275,6 +314,498 @@ function formatCaseId(nextNumber) {
   return `KGL-2026-${String(nextNumber).padStart(4, "0")}`;
 }
 
+function getSecurityLevelColor(level) {
+  return SECURITY_LEVELS.find((entry) => entry.key === level)?.color || "var(--muted)";
+}
+
+function PageHeader({ title, subtitle, children }) {
+  return (
+    <section className="page-header">
+      <div>
+        <h1 className="page-title">{title}</h1>
+        <p className="page-subtitle">{subtitle}</p>
+      </div>
+      {children ? <div className="page-actions">{children}</div> : null}
+    </section>
+  );
+}
+
+function CrimeMapPage({ districts }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader
+        title="Crime risk map"
+        subtitle="Visualize current crime severity across districts using security-level color coding."
+      />
+      <section className="panel map-panel">
+        <div className="map-guide">
+          <div className="map-intro">
+            <h2>District security overview</h2>
+            <p>
+              Each district is shaded to reflect the current incident intensity and security level.
+              Higher rates require immediate response and surveillance.
+            </p>
+          </div>
+          <div className="map-legend">
+            {SECURITY_LEVELS.map((entry) => (
+              <div className="map-legend-item" key={entry.key}>
+                <span className="legend-swatch" style={{ backgroundColor: entry.color }} />
+                <span>{entry.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="district-grid">
+          {districts.map((district) => (
+            <article className="district-card" key={district.id} style={{ borderColor: getSecurityLevelColor(district.level) }}>
+              <div className="district-marker" style={{ backgroundColor: getSecurityLevelColor(district.level) }} />
+              <div className="district-label">{district.name}</div>
+              <div className="district-rate">{district.rate}%</div>
+              <div className="district-status">{SECURITY_LEVELS.find((entry) => entry.key === district.level)?.label || "Unknown"}</div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function AnalyticsPage({ cases, districts }) {
+  const totalCases = cases.length;
+  const highRisk = cases.filter((entry) => entry.sev === "high" || entry.sev === "crit").length;
+  const openCases = cases.filter((entry) => entry.status === "open").length;
+
+  return (
+    <div className="page-content single-column">
+      <PageHeader
+        title="Analytics"
+        subtitle="Review major trends, risk levels, and geographic patterns in the case record dataset."
+      />
+
+      <section className="panel">
+        <div className="panel-head">
+          <div className="panel-copy">
+            <h2 className="panel-title">Current analytics summary</h2>
+            <div className="panel-subtitle">Key metrics provide a quick view of active demand and risk exposure.</div>
+          </div>
+        </div>
+        <div className="stats-grid compact">
+          <StatCard mark="A1" label="Total case records" value={totalCases} note="Includes all open and closed cases." />
+          <StatCard mark="A2" label="High-risk cases" value={highRisk} note="Cases marked high or critical." />
+          <StatCard mark="A3" label="Open investigations" value={openCases} note="Requires active follow-up." />
+          <StatCard mark="A4" label="Monitored districts" value={districts.length} note="District heatmap coverage." />
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div className="panel-copy">
+            <h2 className="panel-title">Top district risk levels</h2>
+            <div className="panel-subtitle">Districts sorted by reported crime rate.</div>
+          </div>
+        </div>
+        <div className="heatmap-list">
+          {districts.map((district) => (
+            <div className="heatmap-item" key={district.id}>
+              <div>
+                <strong>{district.name}</strong>
+                <div className="case-subtle">{district.rate}% crime rate</div>
+              </div>
+              <span className="badge {district.level}">{SECURITY_LEVELS.find((entry) => entry.key === district.level)?.label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function OfficersPage({ officers }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="Officers" subtitle="View active officer assignments and duty status." />
+      <section className="panel">
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Badge</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Location</th>
+              </tr>
+            </thead>
+            <tbody>
+              {officers.map((officer) => (
+                <tr key={officer.id}>
+                  <td>{officer.id}</td>
+                  <td>{officer.name}</td>
+                  <td>{officer.role}</td>
+                  <td>{officer.status}</td>
+                  <td>{officer.location}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function DepartmentsPage({ departments }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="Departments" subtitle="Monitor core department capacity and operational focus." />
+      <section className="panel">
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Department</th>
+                <th>Units</th>
+                <th>Active</th>
+                <th>Focus</th>
+              </tr>
+            </thead>
+            <tbody>
+              {departments.map((dept) => (
+                <tr key={dept.name}>
+                  <td>{dept.name}</td>
+                  <td>{dept.units}</td>
+                  <td>{dept.active}</td>
+                  <td>{dept.focus}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function EvidencePage({ evidence }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="Evidence Vault" subtitle="Track evidence items linked to open and closed cases." />
+      <section className="panel">
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Case</th>
+                <th>Location</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {evidence.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.id}</td>
+                  <td>{item.type}</td>
+                  <td>{item.caseId}</td>
+                  <td>{item.location}</td>
+                  <td>{item.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function SecurityLogPage({ logs }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="Security Log" subtitle="Review recent system events and access history." />
+      <section className="panel">
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Event</th>
+                <th>Actor</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {logs.map((log, index) => (
+                <tr key={`${log.time}-${index}`}>
+                  <td>{log.time}</td>
+                  <td>{log.event}</td>
+                  <td>{log.actor}</td>
+                  <td>{log.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function SettingsPage({ currentUser, theme, onToggleTheme }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="Settings" subtitle="Manage theme and staff session preferences." />
+      <section className="panel">
+        <div className="detail-box">
+          <strong>Signed-in user</strong>
+          <div className="case-subtle">{currentUser?.name || "Guest"} · Badge {currentUser?.badge || "—"}</div>
+        </div>
+        <div className="detail-box">
+          <strong>Theme</strong>
+          <div className="case-subtle">Current mode: {theme === "dark" ? "Dark" : "Light"}</div>
+          <button type="button" className="btn btn-secondary" onClick={onToggleTheme}>
+            Switch to {theme === "dark" ? "light" : "dark"} mode
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function NewReportPage({ onSubmit, onDraftSaved, feed, currentUser }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="New report" subtitle="File a new incident report and submit it into the system." />
+      <section className="panel">
+        <ReportForm onSubmit={onSubmit} onDraftSaved={onDraftSaved} currentUser={currentUser} />
+      </section>
+      <section className="panel">
+        <div className="panel-head">
+          <div className="panel-copy">
+            <h2 className="panel-title">Recent report activity</h2>
+            <div className="panel-subtitle">Latest entries from the field after report submission.</div>
+          </div>
+        </div>
+        <ActivityFeed items={feed.slice(0, 5)} />
+      </section>
+    </div>
+  );
+}
+
+function CaseRecordsPage({ cases, caseFilter, searchQuery, onSearchChange, onSelect, setCaseFilter, filteredCount }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="Case records" subtitle="Search, filter, and inspect open and closed cases." />
+      <section className="panel">
+        <div className="filter-bar">
+          {['all', 'open', 'review', 'closed'].map((status) => (
+            <button
+              key={status}
+              type="button"
+              className={`chip ${caseFilter === status ? 'active' : ''}`}
+              onClick={() => setCaseFilter(status)}
+            >
+              {status === 'all' ? 'All cases' : getStatusLabel(status)}
+            </button>
+          ))}
+
+          <div className="search-box">
+            <span aria-hidden="true">Search</span>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(event) => onSearchChange(event.target.value)}
+              placeholder="Search by ID, type, status, or location"
+              aria-label="Search cases"
+            />
+          </div>
+        </div>
+
+        <div className="panel-head">
+          <div className="panel-copy">
+            <div className="panel-title">{filteredCount} case{filteredCount === 1 ? '' : 's'} match</div>
+            <div className="panel-subtitle">Tap or click a case to review the next steps.</div>
+          </div>
+        </div>
+
+        <CasesTable cases={cases} filter={caseFilter} query={searchQuery} onSelect={onSelect} />
+      </section>
+    </div>
+  );
+}
+
+function renderPageContent(activeNav, props) {
+  switch (activeNav) {
+    case "Crime Map":
+      return <CrimeMapPage districts={DISTRICT_MAP_DATA} />;
+    case "Analytics":
+      return <AnalyticsPage cases={props.cases} districts={DISTRICT_MAP_DATA} />;
+    case "Officers":
+      return <OfficersPage officers={OFFICERS} />;
+    case "Departments":
+      return <DepartmentsPage departments={DEPARTMENTS} />;
+    case "Evidence Vault":
+      return <EvidencePage evidence={EVIDENCE_ITEMS} />;
+    case "Security Log":
+      return <SecurityLogPage logs={SECURITY_LOG} />;
+    case "Settings":
+      return <SettingsPage currentUser={props.currentUser} theme={props.theme} onToggleTheme={props.onToggleTheme} />;
+    case "New Report":
+      return <NewReportPage onSubmit={props.onSubmit} onDraftSaved={props.onDraftSaved} feed={props.feed} currentUser={props.currentUser} />;
+    case "Case Records":
+      return (
+        <CaseRecordsPage
+          cases={props.cases}
+          caseFilter={props.caseFilter}
+          searchQuery={props.searchQuery}
+          onSearchChange={props.onSearchChange}
+          onSelect={props.onSelect}
+          setCaseFilter={props.setCaseFilter}
+          filteredCount={props.filteredCount}
+        />
+      );
+    default:
+      return <DashboardContent {...props} />;
+  }
+}
+
+function DashboardContent({ scrollToReport, scrollToCases, reportRef, casesRef, feed, cases, caseFilter, searchQuery, setCaseFilter, setSearchQuery, filteredCount, onSelect, addToast, handleReportSubmit, scanResult, scanLoading, currentUser }) {
+  return (
+    <>
+      <section className="hero">
+        <div className="hero-copy">
+          <div className="hero-kicker">Good morning, Officer Mutoni</div>
+          <h1 className="hero-title">Operations center for reports, cases, and response activity.</h1>
+          <p className="hero-subtitle">
+            File a report, check what is happening right now, and keep active cases organized in one calm, easy-to-scan workspace.
+          </p>
+          <div className="hero-meta">
+            <span className="meta-chip">Sat 23 May 2026</span>
+            <span className="meta-chip">Kigali Metropolitan Police</span>
+            <span className="meta-chip">Shift A</span>
+          </div>
+        </div>
+
+        <div className="hero-actions">
+          <button type="button" className="btn btn-primary" onClick={scrollToReport}>
+            New report
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={scrollToCases}>
+            Review cases
+          </button>
+        </div>
+      </section>
+
+      <section className="stats-grid" aria-label="Dashboard summary">
+        <StatCard
+          mark="01"
+          label="Reports filed"
+          value={reportRef ? reportRef.current?.value : 0}
+          note="Up 12% compared with last month."
+        />
+        <StatCard
+          mark="02"
+          label="Open critical cases"
+          value="18"
+          note="Three fewer than yesterday."
+        />
+        <StatCard
+          mark="03"
+          label="Cases resolved"
+          value="189"
+          note="Closure rate is currently 76.5%."
+        />
+        <StatCard
+          mark="04"
+          label="Officers on duty"
+          value="34"
+          note="Three units are actively deployed."
+        />
+      </section>
+
+      <SystemStatusGrid />
+
+      <section className="content-grid">
+        <SuspectScanner onScan={handleSuspectScan} result={scanResult} scanning={scanLoading} />
+      </section>
+
+      <section className="content-grid">
+        <section className="panel" ref={reportRef}>
+          <div className="panel-head">
+            <div className="panel-copy">
+              <h2 className="panel-title">New incident report</h2>
+              <div className="panel-subtitle">Capture the essentials first, then save or submit when you are ready.</div>
+            </div>
+          </div>
+          <ReportForm onSubmit={handleReportSubmit} onDraftSaved={addToast} currentUser={currentUser} />
+        </section>
+
+        <div className="stack">
+          <section className="panel">
+            <div className="panel-head">
+              <div className="panel-copy">
+                <h2 className="panel-title">Live activity feed</h2>
+                <div className="panel-subtitle">Recent updates from the field and system.</div>
+              </div>
+              <button type="button" className="panel-action" onClick={() => addToast("A full activity view will be added soon.")}> 
+                View all
+              </button>
+            </div>
+            <ActivityFeed items={feed} />
+          </section>
+
+          <section className="panel" ref={casesRef}>
+            <div className="panel-head">
+              <div className="panel-copy">
+                <h2 className="panel-title">Recent cases</h2>
+                <div className="panel-subtitle">
+                  {filteredCount} case{filteredCount === 1 ? "" : "s"} match the current filter.
+                </div>
+              </div>
+              <button type="button" className="panel-action" onClick={() => addToast("Case details will be expanded in a future update.")}> 
+                View all
+              </button>
+            </div>
+
+            <div className="filter-bar">
+              {["all", "open", "review", "closed"].map((status) => (
+                <button
+                  key={status}
+                  type="button"
+                  className={`chip ${caseFilter === status ? "active" : ""}`}
+                  onClick={() => setCaseFilter(status)}
+                >
+                  {status === "all" ? "All cases" : getStatusLabel(status)}
+                </button>
+              ))}
+
+              <div className="search-box">
+                <span aria-hidden="true">Search</span>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search by ID, type, status, or location"
+                  aria-label="Search cases"
+                />
+              </div>
+            </div>
+
+            <CasesTable
+              cases={cases}
+              filter={caseFilter}
+              query={searchQuery}
+              onSelect={onSelect}
+            />
+          </section>
+        </div>
+      </section>
+    </>
+  );
+}
+
 function StatCard({ mark, label, value, note }) {
   return (
     <article className="stat-card" data-mark={mark}>
@@ -325,7 +856,7 @@ function SeverityPicker({ value, onChange }) {
   );
 }
 
-function ReportForm({ onSubmit, onDraftSaved }) {
+function ReportForm({ onSubmit, onDraftSaved, currentUser }) {
   const [form, setForm] = useState(() => {
     if (typeof window === "undefined") {
       return DEFAULT_FORM;
@@ -410,7 +941,13 @@ function ReportForm({ onSubmit, onDraftSaved }) {
 
         <div className="field">
           <label>Reporting officer</label>
-          <input className="input" type="text" value="Officer J. Mutoni | Badge #4521" readOnly />
+          <input
+            className="input"
+            type="text"
+            value={currentUser?.name ? `${currentUser.name} | Badge #${currentUser.badge}` : "Guest"}
+            readOnly
+            aria-readonly="true"
+          />
         </div>
 
         <div className="field field-full">
@@ -986,23 +1523,22 @@ function App() {
   };
 
   const handleNavClick = (label) => {
+    // navigate to the page
     setActiveNav(label);
+    setSidebarOpen(false);
 
     if (label === "Dashboard") {
       window.scrollTo({ top: 0, behavior: "smooth" });
-      setSidebarOpen(false);
       return;
     }
 
     if (label === "New Report") {
       scrollToReport();
-      setSidebarOpen(false);
       return;
     }
 
     if (label === "Case Records") {
       scrollToCases();
-      setSidebarOpen(false);
       return;
     }
 
@@ -1010,12 +1546,8 @@ function App() {
       setCurrentUser(null);
       window.localStorage.removeItem(SESSION_KEY);
       addToast("You have been signed out of the demo session.");
-      setSidebarOpen(false);
       return;
     }
-
-    addToast(`${label} will open here in a future update.`);
-    setSidebarOpen(false);
   };
 
   const handleReportSubmit = (form, errorMessage) => {
@@ -1224,134 +1756,30 @@ function App() {
         </aside>
 
         <main className="main">
-          <section className="hero">
-            <div className="hero-copy">
-              <div className="hero-kicker">Good morning, Officer Mutoni</div>
-              <h1 className="hero-title">Operations center for reports, cases, and response activity.</h1>
-              <p className="hero-subtitle">
-                File a report, check what is happening right now, and keep active cases organized in one calm, easy-to-scan workspace.
-              </p>
-              <div className="hero-meta">
-                <span className="meta-chip">Sat 23 May 2026</span>
-                <span className="meta-chip">Kigali Metropolitan Police</span>
-                <span className="meta-chip">Shift A</span>
-              </div>
-            </div>
-
-            <div className="hero-actions">
-              <button type="button" className="btn btn-primary" onClick={scrollToReport}>
-                New report
-              </button>
-              <button type="button" className="btn btn-secondary" onClick={scrollToCases}>
-                Review cases
-              </button>
-            </div>
-          </section>
-
-          <section className="stats-grid" aria-label="Dashboard summary">
-            <StatCard
-              mark="01"
-              label="Reports filed"
-              value={caseCounter}
-              note="Up 12% compared with last month."
-            />
-            <StatCard
-              mark="02"
-              label="Open critical cases"
-              value="18"
-              note="Three fewer than yesterday."
-            />
-            <StatCard
-              mark="03"
-              label="Cases resolved"
-              value="189"
-              note="Closure rate is currently 76.5%."
-            />
-            <StatCard
-              mark="04"
-              label="Officers on duty"
-              value="34"
-              note="Three units are actively deployed."
-            />
-          </section>
-
-          <SystemStatusGrid />
-
-          <section className="content-grid">
-            <SuspectScanner onScan={handleSuspectScan} result={scanResult} scanning={scanLoading} />
-          </section>
-
-          <section className="content-grid">
-            <section className="panel" ref={reportRef}>
-              <div className="panel-head">
-                <div className="panel-copy">
-                  <h2 className="panel-title">New incident report</h2>
-                  <div className="panel-subtitle">Capture the essentials first, then save or submit when you are ready.</div>
-                </div>
-              </div>
-              <ReportForm onSubmit={handleReportSubmit} onDraftSaved={addToast} />
-            </section>
-
-            <div className="stack">
-              <section className="panel">
-                <div className="panel-head">
-                  <div className="panel-copy">
-                    <h2 className="panel-title">Live activity feed</h2>
-                    <div className="panel-subtitle">Recent updates from the field and system.</div>
-                  </div>
-                  <button type="button" className="panel-action" onClick={() => addToast("A full activity view will be added soon.")}>
-                    View all
-                  </button>
-                </div>
-                <ActivityFeed items={feed} />
-              </section>
-
-              <section className="panel" ref={casesRef}>
-                <div className="panel-head">
-                  <div className="panel-copy">
-                    <h2 className="panel-title">Recent cases</h2>
-                    <div className="panel-subtitle">
-                      {filteredCount} case{filteredCount === 1 ? "" : "s"} match the current filter.
-                    </div>
-                  </div>
-                  <button type="button" className="panel-action" onClick={() => addToast("Case details will be expanded in a future update.")}>
-                    View all
-                  </button>
-                </div>
-
-                <div className="filter-bar">
-                  {["all", "open", "review", "closed"].map((status) => (
-                    <button
-                      key={status}
-                      type="button"
-                      className={`chip ${caseFilter === status ? "active" : ""}`}
-                      onClick={() => setCaseFilter(status)}
-                    >
-                      {status === "all" ? "All cases" : getStatusLabel(status)}
-                    </button>
-                  ))}
-
-                  <div className="search-box">
-                    <span aria-hidden="true">Search</span>
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(event) => setSearchQuery(event.target.value)}
-                      placeholder="Search by ID, type, status, or location"
-                      aria-label="Search cases"
-                    />
-                  </div>
-                </div>
-
-                <CasesTable
-                  cases={cases}
-                  filter={caseFilter}
-                  query={searchQuery}
-                  onSelect={(entry) => addToast(`Case ${entry.id} details are ready for the next screen.`)}
-                />
-              </section>
-            </div>
-          </section>
+          {renderPageContent(activeNav, {
+            scrollToReport,
+            scrollToCases,
+            reportRef,
+            casesRef,
+            feed,
+            cases,
+            caseFilter,
+            searchQuery,
+            setCaseFilter,
+            setSearchQuery,
+            filteredCount,
+            onSelect: (entry) => addToast(`Case ${entry.id} details are ready for the next screen.`),
+            addToast,
+            handleReportSubmit,
+            scanResult,
+            scanLoading,
+            currentUser,
+            theme,
+            onToggleTheme: () => setTheme((t) => (t === "dark" ? "light" : "dark")),
+            onSubmit: handleReportSubmit,
+            onDraftSaved: addToast,
+            casesRef,
+          })}
         </main>
       </div>
 
