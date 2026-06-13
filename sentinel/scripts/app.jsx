@@ -188,6 +188,70 @@ const SYSTEM_CARDS = [
   },
 ];
 
+const DISTRICT_MAP_DATA = [
+  { id: "burera", code: "BRR", name: "Burera", province: "Northern", rate: 76, level: "high", x: 220, y: 110 },
+  { id: "gakenke", code: "GKN", name: "Gakenke", province: "Northern", rate: 58, level: "med", x: 250, y: 170 },
+  { id: "gicumbi", code: "GCB", name: "Gicumbi", province: "Northern", rate: 84, level: "critical", x: 315, y: 120 },
+  { id: "musanze", code: "MSZ", name: "Musanze", province: "Northern", rate: 47, level: "med", x: 170, y: 150 },
+  { id: "rulindo", code: "RLD", name: "Rulindo", province: "Northern", rate: 62, level: "med", x: 265, y: 210 },
+  { id: "nyabihu", code: "NYB", name: "Nyabihu", province: "Western", rate: 39, level: "low", x: 110, y: 185 },
+  { id: "rubavu", code: "RBV", name: "Rubavu", province: "Western", rate: 91, level: "critical", x: 95, y: 240 },
+  { id: "rutsiro", code: "RTS", name: "Rutsiro", province: "Western", rate: 55, level: "med", x: 135, y: 300 },
+  { id: "ngororero", code: "NGR", name: "Ngororero", province: "Western", rate: 64, level: "med", x: 185, y: 250 },
+  { id: "karongi", code: "KRG", name: "Karongi", province: "Western", rate: 72, level: "high", x: 175, y: 345 },
+  { id: "nyamasheke", code: "NYS", name: "Nyamasheke", province: "Western", rate: 48, level: "med", x: 120, y: 430 },
+  { id: "rusizi", code: "RSZ", name: "Rusizi", province: "Western", rate: 88, level: "critical", x: 75, y: 515 },
+  { id: "nyagatare", code: "NYT", name: "Nyagatare", province: "Eastern", rate: 67, level: "high", x: 430, y: 115 },
+  { id: "gatsibo", code: "GTS", name: "Gatsibo", province: "Eastern", rate: 52, level: "med", x: 435, y: 205 },
+  { id: "kayonza", code: "KYN", name: "Kayonza", province: "Eastern", rate: 59, level: "med", x: 440, y: 300 },
+  { id: "kirehe", code: "KRE", name: "Kirehe", province: "Eastern", rate: 41, level: "low", x: 470, y: 420 },
+  { id: "ngoma", code: "NGM", name: "Ngoma", province: "Eastern", rate: 73, level: "high", x: 385, y: 380 },
+  { id: "bugesera", code: "BGS", name: "Bugesera", province: "Eastern", rate: 86, level: "critical", x: 340, y: 500 },
+  { id: "rwamagana", code: "RMG", name: "Rwamagana", province: "Eastern", rate: 45, level: "med", x: 360, y: 310 },
+  { id: "gasabo", code: "GSB", name: "Gasabo", province: "Kigali", rate: 78, level: "high", x: 315, y: 260 },
+  { id: "nyarugenge", code: "NRG", name: "Nyarugenge", province: "Kigali", rate: 94, level: "critical", x: 270, y: 315 },
+  { id: "kicukiro", code: "KCK", name: "Kicukiro", province: "Kigali", rate: 69, level: "high", x: 315, y: 345 },
+  { id: "nyanza", code: "NYZ", name: "Nyanza", province: "Southern", rate: 51, level: "med", x: 255, y: 435 },
+  { id: "muhanga", code: "MHA", name: "Muhanga", province: "Southern", rate: 63, level: "med", x: 310, y: 440 },
+  { id: "ruhango", code: "RHG", name: "Ruhango", province: "Southern", rate: 44, level: "low", x: 295, y: 495 },
+  { id: "huye", code: "HYE", name: "Huye", province: "Southern", rate: 60, level: "med", x: 220, y: 500 },
+  { id: "gisagara", code: "GSG", name: "Gisagara", province: "Southern", rate: 82, level: "critical", x: 280, y: 560 },
+  { id: "nyamagabe", code: "NYM", name: "Nyamagabe", province: "Southern", rate: 37, level: "low", x: 180, y: 585 },
+  { id: "nyaruguru", code: "NYR", name: "Nyaruguru", province: "Southern", rate: 65, level: "high", x: 245, y: 650 },
+  { id: "kamonyi", code: "KMY", name: "Kamonyi", province: "Southern", rate: 57, level: "med", x: 330, y: 390 },
+];
+
+const SECURITY_LEVELS = [
+  { key: "critical", label: "Critical", color: "var(--critical)" },
+  { key: "high", label: "High", color: "var(--danger)" },
+  { key: "med", label: "Medium", color: "var(--warning)" },
+  { key: "low", label: "Low", color: "var(--accent)" },
+];
+
+const OFFICERS = [
+  { id: "4521", name: "Officer Mutoni", role: "Patrol", status: "On duty", location: "Nyarugenge" },
+  { id: "6782", name: "Officer Uwase", role: "Detective", status: "Ready", location: "Gasabo" },
+  { id: "3390", name: "Officer Habimana", role: "Traffic", status: "On call", location: "Kicukiro" },
+];
+
+const DEPARTMENTS = [
+  { name: "Patrol", units: 12, active: 8, focus: "Neighborhood response" },
+  { name: "Detective", units: 5, active: 4, focus: "Case investigation" },
+  { name: "Evidence", units: 3, active: 3, focus: "Secure storage" },
+];
+
+const EVIDENCE_ITEMS = [
+  { id: "EV-001", type: "Photo", caseId: "KGL-2026-0247", location: "Nyarugenge", status: "Stored" },
+  { id: "EV-002", type: "Video", caseId: "KGL-2026-0246", location: "Kicukiro", status: "Under review" },
+  { id: "EV-003", type: "Sample", caseId: "KGL-2026-0245", location: "Gasabo", status: "Locked" },
+];
+
+const SECURITY_LOG = [
+  { time: "09:48", event: "Login", actor: "Officer Mutoni", status: "Success" },
+  { time: "09:33", event: "Case record viewed", actor: "Officer Uwase", status: "Success" },
+  { time: "09:12", event: "Evidence upload", actor: "Officer Habimana", status: "Success" },
+];
+
 const NATIONAL_SYSTEM_RECORDS = [
   {
     fullName: "Mugisha Eric",
@@ -275,6 +339,635 @@ function formatCaseId(nextNumber) {
   return `KGL-2026-${String(nextNumber).padStart(4, "0")}`;
 }
 
+function getSecurityLevelColor(level) {
+  return SECURITY_LEVELS.find((entry) => entry.key === level)?.color || "var(--muted)";
+}
+
+function PageHeader({ title, subtitle, children }) {
+  return (
+    <section className="page-header">
+      <div>
+        <h1 className="page-title">{title}</h1>
+        <p className="page-subtitle">{subtitle}</p>
+      </div>
+      {children ? <div className="page-actions">{children}</div> : null}
+    </section>
+  );
+}
+
+function CrimeMapPage({ districts }) {
+  const [selectedDistrict, setSelectedDistrict] = useState(() => districts[0] || null);
+
+  useEffect(() => {
+    if (!selectedDistrict || !districts.some((district) => district.id === selectedDistrict.id)) {
+      setSelectedDistrict(districts[0] || null);
+    }
+  }, [districts, selectedDistrict]);
+
+  const rankedDistricts = useMemo(() => [...districts].sort((a, b) => b.rate - a.rate), [districts]);
+  const selectedLevel = selectedDistrict ? SECURITY_LEVELS.find((entry) => entry.key === selectedDistrict.level) : null;
+
+  return (
+    <div className="page-content single-column">
+      <PageHeader
+        title="Crime risk map"
+        subtitle="Drawn Rwanda district map with live crime rates and color-coded security levels."
+      />
+
+      <section className="panel map-panel">
+        <div className="map-guide">
+          <div className="map-intro">
+            <h2>Rwanda district map</h2>
+            <p>
+              Every district is plotted on a drawn Rwanda silhouette and shaded by its current crime
+              rate. Higher rates use stronger colors to signal the districts that need attention first.
+            </p>
+          </div>
+          <div className="map-legend">
+            {SECURITY_LEVELS.map((entry) => (
+              <div className="map-legend-item" key={entry.key}>
+                <span className="legend-swatch" style={{ backgroundColor: entry.color }} />
+                <span>{entry.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="map-stage">
+          <svg className="rwanda-outline" viewBox="0 0 540 720" aria-hidden="true">
+            <defs>
+              <linearGradient id="rwandaFill" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="var(--surface-3)" />
+                <stop offset="100%" stopColor="var(--surface)" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M216 34 L298 42 L348 68 L378 116 L386 175 L368 228 L390 278 L382 331 L364 385 L344 444 L338 495 L314 547 L276 602 L236 645 L196 656 L156 624 L128 570 L112 515 L92 470 L70 408 L72 346 L88 290 L104 234 L124 184 L156 126 L186 78 Z"
+              fill="url(#rwandaFill)"
+              stroke="var(--border-strong)"
+              strokeWidth="2"
+              vectorEffect="non-scaling-stroke"
+            />
+            <path
+              d="M160 108 L194 132 L222 176 L240 220 L252 262 L254 308 L246 354 L226 402 L204 454 L188 506 L174 560"
+              fill="none"
+              stroke="color-mix(in srgb, var(--primary) 30%, transparent)"
+              strokeWidth="10"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity="0.35"
+            />
+            <path
+              d="M294 58 L312 114 L318 174 L318 232 L322 286 L334 346 L350 404 L350 462 L340 528 L314 588"
+              fill="none"
+              stroke="color-mix(in srgb, var(--accent) 26%, transparent)"
+              strokeWidth="8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity="0.28"
+            />
+          </svg>
+
+          <div className="district-overlay" role="list" aria-label="Rwanda districts map">
+            {districts.map((district) => {
+              const isActive = selectedDistrict?.id === district.id;
+              const label = SECURITY_LEVELS.find((entry) => entry.key === district.level)?.label || "Unknown";
+
+              return (
+                <button
+                  key={district.id}
+                  type="button"
+                  className={`map-district ${isActive ? "active" : ""}`}
+                  style={{
+                    left: `${(district.x / 540) * 100}%`,
+                    top: `${(district.y / 720) * 100}%`,
+                  }}
+                  onClick={() => setSelectedDistrict(district)}
+                  onMouseEnter={() => setSelectedDistrict(district)}
+                  onFocus={() => setSelectedDistrict(district)}
+                  aria-pressed={isActive}
+                  title={`${district.name} - ${district.rate}% - ${label}`}
+                >
+                  <span className="map-district-pin" style={{ backgroundColor: getSecurityLevelColor(district.level) }} />
+                  <span className="map-district-code">{district.code}</span>
+                  <span className="map-district-rate">{district.rate}%</span>
+                  <span className="map-district-name">{district.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="map-summary">
+          <article className="district-focus-card">
+            <div className="district-focus-head">
+              <div>
+                <div className="panel-title">Selected district</div>
+                <div className="panel-subtitle">Hover or tap a district to inspect its crime rate.</div>
+              </div>
+              {selectedDistrict ? (
+                <span className={`badge ${selectedDistrict.level}`}>{selectedLevel?.label || "Unknown"}</span>
+              ) : null}
+            </div>
+
+            {selectedDistrict ? (
+              <div className="district-focus-body">
+                <div className="district-focus-name">{selectedDistrict.name}</div>
+                <div className="district-focus-meta">
+                  <span>{selectedDistrict.province} Province</span>
+                  <span>{selectedDistrict.code}</span>
+                </div>
+                <div className="district-focus-rate">
+                  {selectedDistrict.rate}
+                  <span>% crime rate</span>
+                </div>
+                <div className="district-focus-bar">
+                  <span
+                    className="district-focus-fill"
+                    style={{
+                      width: `${selectedDistrict.rate}%`,
+                      backgroundColor: getSecurityLevelColor(selectedDistrict.level),
+                    }}
+                  />
+                </div>
+                <p className="district-focus-note">
+                  {selectedDistrict.name} is currently rated {selectedLevel?.label?.toLowerCase() || "unknown"}.
+                </p>
+              </div>
+            ) : null}
+          </article>
+
+          <section className="district-register panel">
+            <div className="panel-head">
+              <div className="panel-copy">
+                <h2 className="panel-title">District register</h2>
+                <div className="panel-subtitle">All 30 districts sorted by live crime rate.</div>
+              </div>
+            </div>
+            <div className="district-register-list">
+              {rankedDistricts.map((district) => (
+                <button
+                  type="button"
+                  key={district.id}
+                  className={`district-register-item ${selectedDistrict?.id === district.id ? "active" : ""}`}
+                  onClick={() => setSelectedDistrict(district)}
+                >
+                  <div>
+                    <strong>{district.name}</strong>
+                    <div className="case-subtle">{district.province} Province</div>
+                  </div>
+                  <div className="district-register-stats">
+                    <span className="district-register-rate">{district.rate}%</span>
+                    <span className={`badge ${district.level}`}>{SECURITY_LEVELS.find((entry) => entry.key === district.level)?.label}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function AnalyticsPage({ cases, districts }) {
+  const totalCases = cases.length;
+  const highRisk = cases.filter((entry) => entry.sev === "high" || entry.sev === "crit").length;
+  const openCases = cases.filter((entry) => entry.status === "open").length;
+  const rankedDistricts = useMemo(() => [...districts].sort((a, b) => b.rate - a.rate), [districts]);
+
+  return (
+    <div className="page-content single-column">
+      <PageHeader
+        title="Analytics"
+        subtitle="Review major trends, risk levels, and geographic patterns in the case record dataset."
+      />
+
+      <section className="panel">
+        <div className="panel-head">
+          <div className="panel-copy">
+            <h2 className="panel-title">Current analytics summary</h2>
+            <div className="panel-subtitle">Key metrics provide a quick view of active demand and risk exposure.</div>
+          </div>
+        </div>
+        <div className="stats-grid compact">
+          <StatCard mark="A1" label="Total case records" value={totalCases} note="Includes all open and closed cases." />
+          <StatCard mark="A2" label="High-risk cases" value={highRisk} note="Cases marked high or critical." />
+          <StatCard mark="A3" label="Open investigations" value={openCases} note="Requires active follow-up." />
+          <StatCard mark="A4" label="Monitored districts" value={districts.length} note="District heatmap coverage." />
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div className="panel-copy">
+            <h2 className="panel-title">Top district risk levels</h2>
+            <div className="panel-subtitle">Districts sorted by reported crime rate.</div>
+          </div>
+        </div>
+        <div className="heatmap-list">
+          {rankedDistricts.map((district) => (
+            <div className="heatmap-item" key={district.id}>
+              <div>
+                <strong>{district.name}</strong>
+                <div className="case-subtle">{district.rate}% crime rate</div>
+              </div>
+              <span className={`badge ${district.level}`}>
+                {SECURITY_LEVELS.find((entry) => entry.key === district.level)?.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function OfficersPage({ officers }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="Officers" subtitle="View active officer assignments and duty status." />
+      <section className="panel">
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Badge</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Location</th>
+              </tr>
+            </thead>
+            <tbody>
+              {officers.map((officer) => (
+                <tr key={officer.id}>
+                  <td>{officer.id}</td>
+                  <td>{officer.name}</td>
+                  <td>{officer.role}</td>
+                  <td>{officer.status}</td>
+                  <td>{officer.location}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function DepartmentsPage({ departments }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="Departments" subtitle="Monitor core department capacity and operational focus." />
+      <section className="panel">
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Department</th>
+                <th>Units</th>
+                <th>Active</th>
+                <th>Focus</th>
+              </tr>
+            </thead>
+            <tbody>
+              {departments.map((dept) => (
+                <tr key={dept.name}>
+                  <td>{dept.name}</td>
+                  <td>{dept.units}</td>
+                  <td>{dept.active}</td>
+                  <td>{dept.focus}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function EvidencePage({ evidence }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="Evidence Vault" subtitle="Track evidence items linked to open and closed cases." />
+      <section className="panel">
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Case</th>
+                <th>Location</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {evidence.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.id}</td>
+                  <td>{item.type}</td>
+                  <td>{item.caseId}</td>
+                  <td>{item.location}</td>
+                  <td>{item.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function SecurityLogPage({ logs }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="Security Log" subtitle="Review recent system events and access history." />
+      <section className="panel">
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Event</th>
+                <th>Actor</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {logs.map((log, index) => (
+                <tr key={`${log.time}-${index}`}>
+                  <td>{log.time}</td>
+                  <td>{log.event}</td>
+                  <td>{log.actor}</td>
+                  <td>{log.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function SettingsPage({ currentUser, theme, onToggleTheme }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="Settings" subtitle="Manage theme and staff session preferences." />
+      <section className="panel">
+        <div className="detail-box">
+          <strong>Signed-in user</strong>
+          <div className="case-subtle">{currentUser?.name || "Guest"} · Badge {currentUser?.badge || "—"}</div>
+        </div>
+        <div className="detail-box">
+          <strong>Theme</strong>
+          <div className="case-subtle">Current mode: {theme === "dark" ? "Dark" : "Light"}</div>
+          <button type="button" className="btn btn-secondary" onClick={onToggleTheme}>
+            Switch to {theme === "dark" ? "light" : "dark"} mode
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function NewReportPage({ onSubmit, onDraftSaved, feed, currentUser }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="New report" subtitle="File a new incident report and submit it into the system." />
+      <section className="panel">
+        <ReportForm onSubmit={onSubmit} onDraftSaved={onDraftSaved} currentUser={currentUser} />
+      </section>
+      <section className="panel">
+        <div className="panel-head">
+          <div className="panel-copy">
+            <h2 className="panel-title">Recent report activity</h2>
+            <div className="panel-subtitle">Latest entries from the field after report submission.</div>
+          </div>
+        </div>
+        <ActivityFeed items={feed.slice(0, 5)} />
+      </section>
+    </div>
+  );
+}
+
+function CaseRecordsPage({ cases, caseFilter, searchQuery, onSearchChange, onSelect, setCaseFilter, filteredCount }) {
+  return (
+    <div className="page-content single-column">
+      <PageHeader title="Case records" subtitle="Search, filter, and inspect open and closed cases." />
+      <section className="panel">
+        <div className="filter-bar">
+          {['all', 'open', 'review', 'closed'].map((status) => (
+            <button
+              key={status}
+              type="button"
+              className={`chip ${caseFilter === status ? 'active' : ''}`}
+              onClick={() => setCaseFilter(status)}
+            >
+              {status === 'all' ? 'All cases' : getStatusLabel(status)}
+            </button>
+          ))}
+
+          <div className="search-box">
+            <span aria-hidden="true">Search</span>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(event) => onSearchChange(event.target.value)}
+              placeholder="Search by ID, type, status, or location"
+              aria-label="Search cases"
+            />
+          </div>
+        </div>
+
+        <div className="panel-head">
+          <div className="panel-copy">
+            <div className="panel-title">{filteredCount} case{filteredCount === 1 ? '' : 's'} match</div>
+            <div className="panel-subtitle">Tap or click a case to review the next steps.</div>
+          </div>
+        </div>
+
+        <CasesTable cases={cases} filter={caseFilter} query={searchQuery} onSelect={onSelect} />
+      </section>
+    </div>
+  );
+}
+
+function renderPageContent(activeNav, props) {
+  switch (activeNav) {
+    case "Crime Map":
+      return <CrimeMapPage districts={DISTRICT_MAP_DATA} />;
+    case "Analytics":
+      return <AnalyticsPage cases={props.cases} districts={DISTRICT_MAP_DATA} />;
+    case "Officers":
+      return <OfficersPage officers={OFFICERS} />;
+    case "Departments":
+      return <DepartmentsPage departments={DEPARTMENTS} />;
+    case "Evidence Vault":
+      return <EvidencePage evidence={EVIDENCE_ITEMS} />;
+    case "Security Log":
+      return <SecurityLogPage logs={SECURITY_LOG} />;
+    case "Settings":
+      return <SettingsPage currentUser={props.currentUser} theme={props.theme} onToggleTheme={props.onToggleTheme} />;
+    case "New Report":
+      return <NewReportPage onSubmit={props.onSubmit} onDraftSaved={props.onDraftSaved} feed={props.feed} currentUser={props.currentUser} />;
+    case "Case Records":
+      return (
+        <CaseRecordsPage
+          cases={props.cases}
+          caseFilter={props.caseFilter}
+          searchQuery={props.searchQuery}
+          onSearchChange={props.onSearchChange}
+          onSelect={props.onSelect}
+          setCaseFilter={props.setCaseFilter}
+          filteredCount={props.filteredCount}
+        />
+      );
+    default:
+      return <DashboardContent {...props} />;
+  }
+}
+
+function DashboardContent({ scrollToReport, scrollToCases, reportRef, casesRef, feed, cases, caseFilter, searchQuery, setCaseFilter, setSearchQuery, filteredCount, onSelect, addToast, handleReportSubmit, handleSuspectScan, scanResult, scanLoading, currentUser }) {
+  return (
+    <>
+      <section className="hero">
+        <div className="hero-copy">
+          <div className="hero-kicker">Good morning, Officer Mutoni</div>
+          <h1 className="hero-title">Operations center for reports, cases, and response activity.</h1>
+          <p className="hero-subtitle">
+            File a report, check what is happening right now, and keep active cases organized in one calm, easy-to-scan workspace.
+          </p>
+          <div className="hero-meta">
+            <span className="meta-chip">Sat 23 May 2026</span>
+            <span className="meta-chip">Kigali Metropolitan Police</span>
+            <span className="meta-chip">Shift A</span>
+          </div>
+        </div>
+
+        <div className="hero-actions">
+          <button type="button" className="btn btn-primary" onClick={scrollToReport}>
+            New report
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={scrollToCases}>
+            Review cases
+          </button>
+        </div>
+      </section>
+
+      <section className="stats-grid" aria-label="Dashboard summary">
+        <StatCard
+          mark="01"
+          label="Reports filed"
+          value={reportRef ? reportRef.current?.value : 0}
+          note="Up 12% compared with last month."
+        />
+        <StatCard
+          mark="02"
+          label="Open critical cases"
+          value="18"
+          note="Three fewer than yesterday."
+        />
+        <StatCard
+          mark="03"
+          label="Cases resolved"
+          value="189"
+          note="Closure rate is currently 76.5%."
+        />
+        <StatCard
+          mark="04"
+          label="Officers on duty"
+          value="34"
+          note="Three units are actively deployed."
+        />
+      </section>
+
+      <SystemStatusGrid />
+
+      <section className="content-grid">
+        <SuspectScanner onScan={handleSuspectScan} result={scanResult} scanning={scanLoading} />
+      </section>
+
+      <section className="content-grid">
+        <section className="panel" ref={reportRef}>
+          <div className="panel-head">
+            <div className="panel-copy">
+              <h2 className="panel-title">New incident report</h2>
+              <div className="panel-subtitle">Capture the essentials first, then save or submit when you are ready.</div>
+            </div>
+          </div>
+          <ReportForm onSubmit={handleReportSubmit} onDraftSaved={addToast} currentUser={currentUser} />
+        </section>
+
+        <div className="stack">
+          <section className="panel">
+            <div className="panel-head">
+              <div className="panel-copy">
+                <h2 className="panel-title">Live activity feed</h2>
+                <div className="panel-subtitle">Recent updates from the field and system.</div>
+              </div>
+              <button type="button" className="panel-action" onClick={() => addToast("A full activity view will be added soon.")}> 
+                View all
+              </button>
+            </div>
+            <ActivityFeed items={feed} />
+          </section>
+
+          <section className="panel" ref={casesRef}>
+            <div className="panel-head">
+              <div className="panel-copy">
+                <h2 className="panel-title">Recent cases</h2>
+                <div className="panel-subtitle">
+                  {filteredCount} case{filteredCount === 1 ? "" : "s"} match the current filter.
+                </div>
+              </div>
+              <button type="button" className="panel-action" onClick={() => addToast("Case details will be expanded in a future update.")}> 
+                View all
+              </button>
+            </div>
+
+            <div className="filter-bar">
+              {["all", "open", "review", "closed"].map((status) => (
+                <button
+                  key={status}
+                  type="button"
+                  className={`chip ${caseFilter === status ? "active" : ""}`}
+                  onClick={() => setCaseFilter(status)}
+                >
+                  {status === "all" ? "All cases" : getStatusLabel(status)}
+                </button>
+              ))}
+
+              <div className="search-box">
+                <span aria-hidden="true">Search</span>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search by ID, type, status, or location"
+                  aria-label="Search cases"
+                />
+              </div>
+            </div>
+
+            <CasesTable
+              cases={cases}
+              filter={caseFilter}
+              query={searchQuery}
+              onSelect={onSelect}
+            />
+          </section>
+        </div>
+      </section>
+    </>
+  );
+}
+
 function StatCard({ mark, label, value, note }) {
   return (
     <article className="stat-card" data-mark={mark}>
@@ -325,7 +1018,7 @@ function SeverityPicker({ value, onChange }) {
   );
 }
 
-function ReportForm({ onSubmit, onDraftSaved }) {
+function ReportForm({ onSubmit, onDraftSaved, currentUser }) {
   const [form, setForm] = useState(() => {
     if (typeof window === "undefined") {
       return DEFAULT_FORM;
@@ -410,7 +1103,13 @@ function ReportForm({ onSubmit, onDraftSaved }) {
 
         <div className="field">
           <label>Reporting officer</label>
-          <input className="input" type="text" value="Officer J. Mutoni | Badge #4521" readOnly />
+          <input
+            className="input"
+            type="text"
+            value={currentUser?.name ? `${currentUser.name} | Badge #${currentUser.badge}` : "Guest"}
+            readOnly
+            aria-readonly="true"
+          />
         </div>
 
         <div className="field field-full">
@@ -986,23 +1685,22 @@ function App() {
   };
 
   const handleNavClick = (label) => {
+    // navigate to the page
     setActiveNav(label);
+    setSidebarOpen(false);
 
     if (label === "Dashboard") {
       window.scrollTo({ top: 0, behavior: "smooth" });
-      setSidebarOpen(false);
       return;
     }
 
     if (label === "New Report") {
       scrollToReport();
-      setSidebarOpen(false);
       return;
     }
 
     if (label === "Case Records") {
       scrollToCases();
-      setSidebarOpen(false);
       return;
     }
 
@@ -1010,12 +1708,8 @@ function App() {
       setCurrentUser(null);
       window.localStorage.removeItem(SESSION_KEY);
       addToast("You have been signed out of the demo session.");
-      setSidebarOpen(false);
       return;
     }
-
-    addToast(`${label} will open here in a future update.`);
-    setSidebarOpen(false);
   };
 
   const handleReportSubmit = (form, errorMessage) => {
@@ -1224,134 +1918,32 @@ function App() {
         </aside>
 
         <main className="main">
-          <section className="hero">
-            <div className="hero-copy">
-              <div className="hero-kicker">Good morning, Officer Mutoni</div>
-              <h1 className="hero-title">Operations center for reports, cases, and response activity.</h1>
-              <p className="hero-subtitle">
-                File a report, check what is happening right now, and keep active cases organized in one calm, easy-to-scan workspace.
-              </p>
-              <div className="hero-meta">
-                <span className="meta-chip">Sat 23 May 2026</span>
-                <span className="meta-chip">Kigali Metropolitan Police</span>
-                <span className="meta-chip">Shift A</span>
-              </div>
-            </div>
-
-            <div className="hero-actions">
-              <button type="button" className="btn btn-primary" onClick={scrollToReport}>
-                New report
-              </button>
-              <button type="button" className="btn btn-secondary" onClick={scrollToCases}>
-                Review cases
-              </button>
-            </div>
-          </section>
-
-          <section className="stats-grid" aria-label="Dashboard summary">
-            <StatCard
-              mark="01"
-              label="Reports filed"
-              value={caseCounter}
-              note="Up 12% compared with last month."
-            />
-            <StatCard
-              mark="02"
-              label="Open critical cases"
-              value="18"
-              note="Three fewer than yesterday."
-            />
-            <StatCard
-              mark="03"
-              label="Cases resolved"
-              value="189"
-              note="Closure rate is currently 76.5%."
-            />
-            <StatCard
-              mark="04"
-              label="Officers on duty"
-              value="34"
-              note="Three units are actively deployed."
-            />
-          </section>
-
-          <SystemStatusGrid />
-
-          <section className="content-grid">
-            <SuspectScanner onScan={handleSuspectScan} result={scanResult} scanning={scanLoading} />
-          </section>
-
-          <section className="content-grid">
-            <section className="panel" ref={reportRef}>
-              <div className="panel-head">
-                <div className="panel-copy">
-                  <h2 className="panel-title">New incident report</h2>
-                  <div className="panel-subtitle">Capture the essentials first, then save or submit when you are ready.</div>
-                </div>
-              </div>
-              <ReportForm onSubmit={handleReportSubmit} onDraftSaved={addToast} />
-            </section>
-
-            <div className="stack">
-              <section className="panel">
-                <div className="panel-head">
-                  <div className="panel-copy">
-                    <h2 className="panel-title">Live activity feed</h2>
-                    <div className="panel-subtitle">Recent updates from the field and system.</div>
-                  </div>
-                  <button type="button" className="panel-action" onClick={() => addToast("A full activity view will be added soon.")}>
-                    View all
-                  </button>
-                </div>
-                <ActivityFeed items={feed} />
-              </section>
-
-              <section className="panel" ref={casesRef}>
-                <div className="panel-head">
-                  <div className="panel-copy">
-                    <h2 className="panel-title">Recent cases</h2>
-                    <div className="panel-subtitle">
-                      {filteredCount} case{filteredCount === 1 ? "" : "s"} match the current filter.
-                    </div>
-                  </div>
-                  <button type="button" className="panel-action" onClick={() => addToast("Case details will be expanded in a future update.")}>
-                    View all
-                  </button>
-                </div>
-
-                <div className="filter-bar">
-                  {["all", "open", "review", "closed"].map((status) => (
-                    <button
-                      key={status}
-                      type="button"
-                      className={`chip ${caseFilter === status ? "active" : ""}`}
-                      onClick={() => setCaseFilter(status)}
-                    >
-                      {status === "all" ? "All cases" : getStatusLabel(status)}
-                    </button>
-                  ))}
-
-                  <div className="search-box">
-                    <span aria-hidden="true">Search</span>
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(event) => setSearchQuery(event.target.value)}
-                      placeholder="Search by ID, type, status, or location"
-                      aria-label="Search cases"
-                    />
-                  </div>
-                </div>
-
-                <CasesTable
-                  cases={cases}
-                  filter={caseFilter}
-                  query={searchQuery}
-                  onSelect={(entry) => addToast(`Case ${entry.id} details are ready for the next screen.`)}
-                />
-              </section>
-            </div>
-          </section>
+          {renderPageContent(activeNav, {
+            scrollToReport,
+            scrollToCases,
+            reportRef,
+            casesRef,
+            feed,
+            cases,
+            caseFilter,
+            searchQuery,
+            setCaseFilter,
+            setSearchQuery,
+            filteredCount,
+            onSelect: (entry) => addToast(`Case ${entry.id} details are ready for the next screen.`),
+            addToast,
+            handleReportSubmit,
+            handleSuspectScan,
+            scanResult,
+            scanLoading,
+            currentUser,
+            theme,
+            onToggleTheme: () => setTheme((t) => (t === "dark" ? "light" : "dark")),
+            onSubmit: handleReportSubmit,
+            onDraftSaved: addToast,
+            casesRef,
+            onSearchChange: setSearchQuery,
+          })}
         </main>
       </div>
 

@@ -644,6 +644,302 @@ img {
   font-weight: 700;
 }
 
+.map-panel {
+  padding: 1rem;
+}
+
+.map-guide {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.map-intro {
+  max-width: 52ch;
+}
+
+.map-intro h2 {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-head);
+  font-size: 1.2rem;
+  line-height: 1.1;
+}
+
+.map-intro p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.map-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.map-stage {
+  position: relative;
+  min-height: 760px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 20% 18%, color-mix(in srgb, var(--primary) 16%, transparent), transparent 38%),
+    radial-gradient(circle at 82% 22%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 32%),
+    linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, transparent), var(--surface-2));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.map-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black, transparent 78%);
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+.rwanda-outline {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.district-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.map-district {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.12rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  transform: translate(-50%, -50%);
+  transition: transform var(--trans), filter var(--trans), opacity var(--trans);
+}
+
+.map-district:hover,
+.map-district:focus-visible,
+.map-district.active {
+  transform: translate(-50%, -50%) scale(1.06);
+  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.18));
+  outline: none;
+}
+
+.map-district-pin {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.04), 0 10px 22px rgba(0, 0, 0, 0.18);
+}
+
+.map-district-code {
+  margin-top: 0.18rem;
+  padding: 0.22rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  border: 1px solid var(--border);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.map-district-rate {
+  padding: 0.12rem 0.42rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid var(--border);
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.map-district-name {
+  max-width: 90px;
+  padding: 0.14rem 0.35rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid var(--border);
+  font-size: 0.64rem;
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.88;
+}
+
+.map-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.district-focus-card {
+  padding: 1rem 1.05rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface-2);
+}
+
+.district-focus-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.district-focus-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.district-focus-name {
+  font-family: var(--font-head);
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.district-focus-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.district-focus-meta span {
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.district-focus-rate {
+  display: flex;
+  flex-direction: column;
+  gap: 0.16rem;
+  font-family: var(--font-head);
+  font-size: 2.8rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.district-focus-rate span {
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.district-focus-bar {
+  height: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.district-focus-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.district-focus-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.district-register {
+  overflow: hidden;
+}
+
+.district-register-list {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1rem;
+  max-height: 520px;
+  overflow: auto;
+}
+
+.district-register-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface-2);
+  color: var(--text);
+  text-align: left;
+}
+
+.district-register-item:hover,
+.district-register-item.active {
+  border-color: var(--border-strong);
+  background: color-mix(in srgb, var(--surface-2) 68%, var(--primary-soft));
+}
+
+.district-register-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.district-register-rate {
+  min-width: 54px;
+  text-align: right;
+  font-family: var(--font-head);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
 .form-body {
   padding: 1rem 1.1rem 1.15rem;
 }
@@ -1484,6 +1780,14 @@ tbody td {
 }
 
 @media (max-width: 920px) {
+  .map-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .map-stage {
+    min-height: 680px;
+  }
+
   .menu-btn {
     display: inline-grid;
     place-items: center;
@@ -1529,6 +1833,27 @@ tbody td {
 }
 
 @media (max-width: 720px) {
+  .map-guide {
+    flex-direction: column;
+  }
+
+  .map-legend {
+    justify-content: flex-start;
+  }
+
+  .map-stage {
+    min-height: 560px;
+  }
+
+  .map-district-name {
+    max-width: 74px;
+  }
+
+  .district-register-list {
+    max-height: 420px;
+    padding: 0.85rem;
+  }
+
   .topbar {
     padding: 0 0.85rem;
   }
