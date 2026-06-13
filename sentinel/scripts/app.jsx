@@ -189,11 +189,36 @@ const SYSTEM_CARDS = [
 ];
 
 const DISTRICT_MAP_DATA = [
-  { id: "nyarugenge", name: "Nyarugenge", rate: 94, level: "critical" },
-  { id: "gasabo", name: "Gasabo", rate: 78, level: "high" },
-  { id: "kicukiro", name: "Kicukiro", rate: 62, level: "med" },
-  { id: "remera", name: "Remera", rate: 50, level: "med" },
-  { id: "kimironko", name: "Kimironko", rate: 34, level: "low" },
+  { id: "burera", code: "BRR", name: "Burera", province: "Northern", rate: 76, level: "high", x: 220, y: 110 },
+  { id: "gakenke", code: "GKN", name: "Gakenke", province: "Northern", rate: 58, level: "med", x: 250, y: 170 },
+  { id: "gicumbi", code: "GCB", name: "Gicumbi", province: "Northern", rate: 84, level: "critical", x: 315, y: 120 },
+  { id: "musanze", code: "MSZ", name: "Musanze", province: "Northern", rate: 47, level: "med", x: 170, y: 150 },
+  { id: "rulindo", code: "RLD", name: "Rulindo", province: "Northern", rate: 62, level: "med", x: 265, y: 210 },
+  { id: "nyabihu", code: "NYB", name: "Nyabihu", province: "Western", rate: 39, level: "low", x: 110, y: 185 },
+  { id: "rubavu", code: "RBV", name: "Rubavu", province: "Western", rate: 91, level: "critical", x: 95, y: 240 },
+  { id: "rutsiro", code: "RTS", name: "Rutsiro", province: "Western", rate: 55, level: "med", x: 135, y: 300 },
+  { id: "ngororero", code: "NGR", name: "Ngororero", province: "Western", rate: 64, level: "med", x: 185, y: 250 },
+  { id: "karongi", code: "KRG", name: "Karongi", province: "Western", rate: 72, level: "high", x: 175, y: 345 },
+  { id: "nyamasheke", code: "NYS", name: "Nyamasheke", province: "Western", rate: 48, level: "med", x: 120, y: 430 },
+  { id: "rusizi", code: "RSZ", name: "Rusizi", province: "Western", rate: 88, level: "critical", x: 75, y: 515 },
+  { id: "nyagatare", code: "NYT", name: "Nyagatare", province: "Eastern", rate: 67, level: "high", x: 430, y: 115 },
+  { id: "gatsibo", code: "GTS", name: "Gatsibo", province: "Eastern", rate: 52, level: "med", x: 435, y: 205 },
+  { id: "kayonza", code: "KYN", name: "Kayonza", province: "Eastern", rate: 59, level: "med", x: 440, y: 300 },
+  { id: "kirehe", code: "KRE", name: "Kirehe", province: "Eastern", rate: 41, level: "low", x: 470, y: 420 },
+  { id: "ngoma", code: "NGM", name: "Ngoma", province: "Eastern", rate: 73, level: "high", x: 385, y: 380 },
+  { id: "bugesera", code: "BGS", name: "Bugesera", province: "Eastern", rate: 86, level: "critical", x: 340, y: 500 },
+  { id: "rwamagana", code: "RMG", name: "Rwamagana", province: "Eastern", rate: 45, level: "med", x: 360, y: 310 },
+  { id: "gasabo", code: "GSB", name: "Gasabo", province: "Kigali", rate: 78, level: "high", x: 315, y: 260 },
+  { id: "nyarugenge", code: "NRG", name: "Nyarugenge", province: "Kigali", rate: 94, level: "critical", x: 270, y: 315 },
+  { id: "kicukiro", code: "KCK", name: "Kicukiro", province: "Kigali", rate: 69, level: "high", x: 315, y: 345 },
+  { id: "nyanza", code: "NYZ", name: "Nyanza", province: "Southern", rate: 51, level: "med", x: 255, y: 435 },
+  { id: "muhanga", code: "MHA", name: "Muhanga", province: "Southern", rate: 63, level: "med", x: 310, y: 440 },
+  { id: "ruhango", code: "RHG", name: "Ruhango", province: "Southern", rate: 44, level: "low", x: 295, y: 495 },
+  { id: "huye", code: "HYE", name: "Huye", province: "Southern", rate: 60, level: "med", x: 220, y: 500 },
+  { id: "gisagara", code: "GSG", name: "Gisagara", province: "Southern", rate: 82, level: "critical", x: 280, y: 560 },
+  { id: "nyamagabe", code: "NYM", name: "Nyamagabe", province: "Southern", rate: 37, level: "low", x: 180, y: 585 },
+  { id: "nyaruguru", code: "NYR", name: "Nyaruguru", province: "Southern", rate: 65, level: "high", x: 245, y: 650 },
+  { id: "kamonyi", code: "KMY", name: "Kamonyi", province: "Southern", rate: 57, level: "med", x: 330, y: 390 },
 ];
 
 const SECURITY_LEVELS = [
@@ -331,19 +356,31 @@ function PageHeader({ title, subtitle, children }) {
 }
 
 function CrimeMapPage({ districts }) {
+  const [selectedDistrict, setSelectedDistrict] = useState(() => districts[0] || null);
+
+  useEffect(() => {
+    if (!selectedDistrict || !districts.some((district) => district.id === selectedDistrict.id)) {
+      setSelectedDistrict(districts[0] || null);
+    }
+  }, [districts, selectedDistrict]);
+
+  const rankedDistricts = useMemo(() => [...districts].sort((a, b) => b.rate - a.rate), [districts]);
+  const selectedLevel = selectedDistrict ? SECURITY_LEVELS.find((entry) => entry.key === selectedDistrict.level) : null;
+
   return (
     <div className="page-content single-column">
       <PageHeader
         title="Crime risk map"
-        subtitle="Visualize current crime severity across districts using security-level color coding."
+        subtitle="Drawn Rwanda district map with live crime rates and color-coded security levels."
       />
+
       <section className="panel map-panel">
         <div className="map-guide">
           <div className="map-intro">
-            <h2>District security overview</h2>
+            <h2>Rwanda district map</h2>
             <p>
-              Each district is shaded to reflect the current incident intensity and security level.
-              Higher rates require immediate response and surveillance.
+              Every district is plotted on a drawn Rwanda silhouette and shaded by its current crime
+              rate. Higher rates use stronger colors to signal the districts that need attention first.
             </p>
           </div>
           <div className="map-legend">
@@ -356,15 +393,137 @@ function CrimeMapPage({ districts }) {
           </div>
         </div>
 
-        <div className="district-grid">
-          {districts.map((district) => (
-            <article className="district-card" key={district.id} style={{ borderColor: getSecurityLevelColor(district.level) }}>
-              <div className="district-marker" style={{ backgroundColor: getSecurityLevelColor(district.level) }} />
-              <div className="district-label">{district.name}</div>
-              <div className="district-rate">{district.rate}%</div>
-              <div className="district-status">{SECURITY_LEVELS.find((entry) => entry.key === district.level)?.label || "Unknown"}</div>
-            </article>
-          ))}
+        <div className="map-stage">
+          <svg className="rwanda-outline" viewBox="0 0 540 720" aria-hidden="true">
+            <defs>
+              <linearGradient id="rwandaFill" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="var(--surface-3)" />
+                <stop offset="100%" stopColor="var(--surface)" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M216 34 L298 42 L348 68 L378 116 L386 175 L368 228 L390 278 L382 331 L364 385 L344 444 L338 495 L314 547 L276 602 L236 645 L196 656 L156 624 L128 570 L112 515 L92 470 L70 408 L72 346 L88 290 L104 234 L124 184 L156 126 L186 78 Z"
+              fill="url(#rwandaFill)"
+              stroke="var(--border-strong)"
+              strokeWidth="2"
+              vectorEffect="non-scaling-stroke"
+            />
+            <path
+              d="M160 108 L194 132 L222 176 L240 220 L252 262 L254 308 L246 354 L226 402 L204 454 L188 506 L174 560"
+              fill="none"
+              stroke="color-mix(in srgb, var(--primary) 30%, transparent)"
+              strokeWidth="10"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity="0.35"
+            />
+            <path
+              d="M294 58 L312 114 L318 174 L318 232 L322 286 L334 346 L350 404 L350 462 L340 528 L314 588"
+              fill="none"
+              stroke="color-mix(in srgb, var(--accent) 26%, transparent)"
+              strokeWidth="8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity="0.28"
+            />
+          </svg>
+
+          <div className="district-overlay" role="list" aria-label="Rwanda districts map">
+            {districts.map((district) => {
+              const isActive = selectedDistrict?.id === district.id;
+              const label = SECURITY_LEVELS.find((entry) => entry.key === district.level)?.label || "Unknown";
+
+              return (
+                <button
+                  key={district.id}
+                  type="button"
+                  className={`map-district ${isActive ? "active" : ""}`}
+                  style={{
+                    left: `${(district.x / 540) * 100}%`,
+                    top: `${(district.y / 720) * 100}%`,
+                  }}
+                  onClick={() => setSelectedDistrict(district)}
+                  onMouseEnter={() => setSelectedDistrict(district)}
+                  onFocus={() => setSelectedDistrict(district)}
+                  aria-pressed={isActive}
+                  title={`${district.name} - ${district.rate}% - ${label}`}
+                >
+                  <span className="map-district-pin" style={{ backgroundColor: getSecurityLevelColor(district.level) }} />
+                  <span className="map-district-code">{district.code}</span>
+                  <span className="map-district-rate">{district.rate}%</span>
+                  <span className="map-district-name">{district.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="map-summary">
+          <article className="district-focus-card">
+            <div className="district-focus-head">
+              <div>
+                <div className="panel-title">Selected district</div>
+                <div className="panel-subtitle">Hover or tap a district to inspect its crime rate.</div>
+              </div>
+              {selectedDistrict ? (
+                <span className={`badge ${selectedDistrict.level}`}>{selectedLevel?.label || "Unknown"}</span>
+              ) : null}
+            </div>
+
+            {selectedDistrict ? (
+              <div className="district-focus-body">
+                <div className="district-focus-name">{selectedDistrict.name}</div>
+                <div className="district-focus-meta">
+                  <span>{selectedDistrict.province} Province</span>
+                  <span>{selectedDistrict.code}</span>
+                </div>
+                <div className="district-focus-rate">
+                  {selectedDistrict.rate}
+                  <span>% crime rate</span>
+                </div>
+                <div className="district-focus-bar">
+                  <span
+                    className="district-focus-fill"
+                    style={{
+                      width: `${selectedDistrict.rate}%`,
+                      backgroundColor: getSecurityLevelColor(selectedDistrict.level),
+                    }}
+                  />
+                </div>
+                <p className="district-focus-note">
+                  {selectedDistrict.name} is currently rated {selectedLevel?.label?.toLowerCase() || "unknown"}.
+                </p>
+              </div>
+            ) : null}
+          </article>
+
+          <section className="district-register panel">
+            <div className="panel-head">
+              <div className="panel-copy">
+                <h2 className="panel-title">District register</h2>
+                <div className="panel-subtitle">All 30 districts sorted by live crime rate.</div>
+              </div>
+            </div>
+            <div className="district-register-list">
+              {rankedDistricts.map((district) => (
+                <button
+                  type="button"
+                  key={district.id}
+                  className={`district-register-item ${selectedDistrict?.id === district.id ? "active" : ""}`}
+                  onClick={() => setSelectedDistrict(district)}
+                >
+                  <div>
+                    <strong>{district.name}</strong>
+                    <div className="case-subtle">{district.province} Province</div>
+                  </div>
+                  <div className="district-register-stats">
+                    <span className="district-register-rate">{district.rate}%</span>
+                    <span className={`badge ${district.level}`}>{SECURITY_LEVELS.find((entry) => entry.key === district.level)?.label}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
         </div>
       </section>
     </div>
@@ -375,6 +534,7 @@ function AnalyticsPage({ cases, districts }) {
   const totalCases = cases.length;
   const highRisk = cases.filter((entry) => entry.sev === "high" || entry.sev === "crit").length;
   const openCases = cases.filter((entry) => entry.status === "open").length;
+  const rankedDistricts = useMemo(() => [...districts].sort((a, b) => b.rate - a.rate), [districts]);
 
   return (
     <div className="page-content single-column">
@@ -406,13 +566,15 @@ function AnalyticsPage({ cases, districts }) {
           </div>
         </div>
         <div className="heatmap-list">
-          {districts.map((district) => (
+          {rankedDistricts.map((district) => (
             <div className="heatmap-item" key={district.id}>
               <div>
                 <strong>{district.name}</strong>
                 <div className="case-subtle">{district.rate}% crime rate</div>
               </div>
-              <span className="badge {district.level}">{SECURITY_LEVELS.find((entry) => entry.key === district.level)?.label}</span>
+              <span className={`badge ${district.level}`}>
+                {SECURITY_LEVELS.find((entry) => entry.key === district.level)?.label}
+              </span>
             </div>
           ))}
         </div>
@@ -671,7 +833,7 @@ function renderPageContent(activeNav, props) {
   }
 }
 
-function DashboardContent({ scrollToReport, scrollToCases, reportRef, casesRef, feed, cases, caseFilter, searchQuery, setCaseFilter, setSearchQuery, filteredCount, onSelect, addToast, handleReportSubmit, scanResult, scanLoading, currentUser }) {
+function DashboardContent({ scrollToReport, scrollToCases, reportRef, casesRef, feed, cases, caseFilter, searchQuery, setCaseFilter, setSearchQuery, filteredCount, onSelect, addToast, handleReportSubmit, handleSuspectScan, scanResult, scanLoading, currentUser }) {
   return (
     <>
       <section className="hero">
@@ -1771,6 +1933,7 @@ function App() {
             onSelect: (entry) => addToast(`Case ${entry.id} details are ready for the next screen.`),
             addToast,
             handleReportSubmit,
+            handleSuspectScan,
             scanResult,
             scanLoading,
             currentUser,
@@ -1779,6 +1942,7 @@ function App() {
             onSubmit: handleReportSubmit,
             onDraftSaved: addToast,
             casesRef,
+            onSearchChange: setSearchQuery,
           })}
         </main>
       </div>
